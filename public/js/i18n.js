@@ -139,10 +139,39 @@
         'Please choose today or a future date.': 'Please choose today or a future date.',
         'Please select a valid time slot.': 'Please select a valid time slot.',
         'Please describe the problem in at least 10 characters.': 'Please describe the problem in at least 10 characters.',
+        'Please enter the appliance brand.': 'Please enter the appliance brand.',
         'Unable to submit booking.': 'Unable to submit booking.',
         'No booking found with those details.': 'No booking found with those details.',
         'Security token expired. Please refresh and try again.': 'Security token expired. Please refresh and try again.',
         'Request rejected.': 'Request rejected.',
+      },
+      aiChat: {
+        fabLabel: 'Ask AI troubleshoot',
+        title: 'Troubleshoot assistant',
+        subtitle: 'Describe your appliance issue',
+        equipmentDetails: 'Equipment details',
+        brand: 'Brand',
+        brandPh: 'e.g. Samsung, LG, Panasonic',
+        serial: 'Model / serial',
+        serialPh: 'e.g. model number on label',
+        photos: 'Photos (up to 3)',
+        inputPh: 'What is wrong? e.g. fridge not cooling, washer leaking…',
+        disclaimer: 'AI suggestions are general guidance, not a guaranteed diagnosis.',
+        bookWa: 'Book repair on WhatsApp',
+        welcome: 'Hi! Tell us what is wrong with your appliance. Add the brand (required), model/serial if you know it, and photos if helpful. We can suggest likely causes and next steps.',
+        likelyCause: 'Likely cause',
+        diyChecks: 'Safe checks you can try',
+        proRecommended: 'Professional repair is recommended for this issue.',
+        complexitySimple: 'Simple fix',
+        complexityModerate: 'Moderate',
+        complexityTech: 'Needs a technician',
+        fallback: 'Our team can help diagnose your appliance. Tap below to message us on WhatsApp with your details.',
+        failed: 'Could not get a diagnosis. Please try WhatsApp instead.',
+        brandRequired: 'Please enter the appliance brand in Equipment details.',
+        descRequired: 'Please describe the problem (at least 10 characters).',
+        maxPhotos: 'Maximum 3 photos allowed.',
+        invalidPhoto: 'Use JPEG, PNG, or WebP photos only.',
+        photoTooLarge: 'Each photo must be under 5MB.',
       },
     },
     ms: {
@@ -280,10 +309,39 @@
         'Please choose today or a future date.': 'Sila pilih hari ini atau tarikh akan datang.',
         'Please select a valid time slot.': 'Sila pilih slot masa yang sah.',
         'Please describe the problem in at least 10 characters.': 'Sila terangkan masalah sekurang-kurangnya 10 aksara.',
+        'Please enter the appliance brand.': 'Sila masukkan jenama peralatan.',
         'Unable to submit booking.': 'Tidak dapat menghantar tempahan.',
         'No booking found with those details.': 'Tiada tempahan dijumpai dengan maklumat tersebut.',
         'Security token expired. Please refresh and try again.': 'Token keselamatan tamat. Sila muat semula dan cuba lagi.',
         'Request rejected.': 'Permintaan ditolak.',
+      },
+      aiChat: {
+        fabLabel: 'Tanya AI troubleshoot',
+        title: 'Pembantu troubleshoot',
+        subtitle: 'Terangkan masalah peralatan anda',
+        equipmentDetails: 'Butiran peralatan',
+        brand: 'Jenama',
+        brandPh: 'cth. Samsung, LG, Panasonic',
+        serial: 'Model / siri',
+        serialPh: 'cth. nombor model pada label',
+        photos: 'Foto (sehingga 3)',
+        inputPh: 'Apa masalahnya? cth. peti sejuk tidak sejuk, mesin basuh bocor…',
+        disclaimer: 'Cadangan AI adalah panduan umum, bukan diagnosis yang dijamin.',
+        bookWa: 'Tempah pembaikan di WhatsApp',
+        welcome: 'Hai! Beritahu masalah peralatan anda. Tambah jenama (wajib), model/siri jika ada, dan foto jika membantu. Kami boleh cadangkan punca dan langkah seterusnya.',
+        likelyCause: 'Kemungkinan punca',
+        diyChecks: 'Semakan selamat yang boleh dicuba',
+        proRecommended: 'Pembaikan profesional disyorkan untuk masalah ini.',
+        complexitySimple: 'Pembaikan mudah',
+        complexityModerate: 'Sederhana',
+        complexityTech: 'Perlu juruteknik',
+        fallback: 'Pasukan kami boleh bantu diagnosis peralatan anda. Tekan di bawah untuk WhatsApp dengan butiran anda.',
+        failed: 'Tidak dapat diagnosis. Sila cuba WhatsApp.',
+        brandRequired: 'Sila masukkan jenama peralatan dalam Butiran peralatan.',
+        descRequired: 'Sila terangkan masalah (sekurang-kurangnya 10 aksara).',
+        maxPhotos: 'Maksimum 3 foto sahaja.',
+        invalidPhoto: 'Gunakan foto JPEG, PNG, atau WebP sahaja.',
+        photoTooLarge: 'Setiap foto mesti kurang daripada 5MB.',
       },
     },
   };
@@ -333,6 +391,15 @@
   function translateUrgency(value) {
     const map = { standard: 'form.urgencyStandard', soon: 'form.urgencySoon', emergency: 'form.urgencyEmergency' };
     return map[value] ? t(map[value]) : '';
+  }
+
+  function translateBookingStatus(value) {
+    const map = {
+      pending: 'bookingStatus.pending', confirmed: 'bookingStatus.confirmed',
+      in_progress: 'bookingStatus.in_progress', completed: 'bookingStatus.completed',
+      cancelled: 'bookingStatus.cancelled',
+    };
+    return map[value] ? t(map[value]) : value;
   }
 
   function setLanguage(lang) {

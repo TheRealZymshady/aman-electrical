@@ -26,3 +26,7 @@ services:
         sync: false
       - key: WHATSAPP_API_TOKEN
         sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: AI_CHAT_ENABLED
+        value: "true"

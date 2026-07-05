@@ -40,6 +40,7 @@ const {
   emitBookingCreated,
   emitBookingStatusUpdated,
 } = require('./realtime');
+const { diagnose: aiDiagnose, isAiConfigured, WHATSAPP_REPAIR_NUMBERS } = require('./aiChat');
 
 const PORT = Number(process.env.PORT) || 8765;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -79,7 +80,7 @@ app.use(helmet({
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:'],
+      imgSrc: ["'self'", 'data:', 'blob:'],
       connectSrc: ["'self'"],
       frameAncestors: ["'none'"],
       formAction: ["'self'"],
@@ -93,7 +94,19 @@ app.use(helmet({
 }));
 
 app.use(cookieParser());
-app.use(express.json({ limit: '16kb' }));
+
+const aiDiagnoseLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'AI diagnosis limit reached. Please try again in an hour or contact us on WhatsApp.' },
+});
+
+app.use((req, res, next) => {
+  const limit = req.path === '/api/ai/diagnose' ? '22mb' : '16kb';
+  express.json({ limit })(req, res, next);
+});
 app.use(express.urlencoded({ extended: false, limit: '16kb' }));
 
 const globalLimiter = rateLimit({
@@ -142,6 +155,10 @@ function hashIp(ip) {
   return crypto.createHash('sha256').update(String(ip) + CSRF_SECRET).digest('hex').slice(0, 16);
 }
 
+function sanitizeAuditText(value) {
+  return String(value || '').replace(/[\x00-\x1F\x7F]/g, '').trim().slice(0, 80);
+}
+
 function requireCalendarFeed(req, res, next) {
   const token = String(req.query.token || req.get('authorization')?.replace(/^Bearer\s+/i, '') || '');
   if (!CALENDAR_FEED_TOKEN || !token || token.length !== CALENDAR_FEED_TOKEN.length) {
@@ -178,7 +195,36 @@ app.get('/api/config', (_req, res) => {
   res.json({
     whatsappNumber: WHATSAPP_NUMBER,
     whatsappAlerts: whatsappReady(),
+    aiChatEnabled: isAiConfigured(),
+    whatsappRepairNumbers: WHATSAPP_REPAIR_NUMBERS,
   });
+});
+
+app.post('/api/ai/diagnose', aiDiagnoseLimiter, doubleCsrfProtection, async (req, res) => {
+  try {
+    const result = await aiDiagnose(req.body);
+    if (!result.ok) {
+      return res.status(result.status || 422).json({ error: result.errors[0], errors: result.errors });
+    }
+
+    logAudit({
+      action: 'ai_diagnosis',
+      details: {
+        brand: sanitizeAuditText(req.body?.brand),
+        hasImages: Array.isArray(req.body?.images) && req.body.images.length > 0,
+        imageCount: Array.isArray(req.body?.images) ? Math.min(req.body.images.length, 3) : 0,
+        aiUsed: Boolean(result.aiAvailable && result.diagnosis),
+        complexity: result.diagnosis?.complexity || null,
+        lang: req.body?.lang === 'ms' ? 'ms' : 'en',
+      },
+      actor: 'customer',
+    });
+
+    res.json(result);
+  } catch (err) {
+    console.error('AI diagnose route error:', err.message);
+    res.status(500).json({ error: 'Unable to process diagnosis. Please try WhatsApp instead.' });
+  }
 });
 
 app.get('/api/csrf-token', (req, res) => {
@@ -554,6 +600,11 @@ app.listen(PORT, () => {
     console.log('Google Calendar: auto-sync enabled for new bookings.');
   } else if (CALENDAR_FEED_TOKEN) {
     console.log('Calendar feed: technicians can subscribe to /api/calendar/feed.ics');
+  }
+  if (isAiConfigured()) {
+    console.log('AI troubleshoot assistant: enabled (POST /api/ai/diagnose)');
+  } else {
+    console.log('AI troubleshoot assistant: not configured — set OPENAI_API_KEY or ANTHROPIC_API_KEY');
   }
   if (!isProd) {
     console.log('Set CSRF_SECRET and ADMIN_API_KEY in .env before production deploy.');
