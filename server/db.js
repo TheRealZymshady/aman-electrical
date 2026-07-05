@@ -150,6 +150,15 @@ const updateStatus = db.prepare(`
   UPDATE bookings SET status = ?, updated_at = datetime('now') WHERE ticket_id = ?
 `);
 
+const listBookingsForCalendar = db.prepare(`
+  SELECT ticket_id, receipt_no, name, phone, address, appliance, preferred_date, timeslot, issue, status, created_at
+  FROM bookings
+  WHERE status != 'cancelled'
+    AND date(preferred_date) >= date('now', '-1 day')
+    AND date(preferred_date) <= date('now', '+90 days')
+  ORDER BY preferred_date ASC, created_at ASC
+`);
+
 const countBookings = db.prepare('SELECT COUNT(*) AS total FROM bookings');
 const countByStatus = db.prepare(`
   SELECT status, COUNT(*) AS total FROM bookings GROUP BY status
@@ -211,6 +220,7 @@ module.exports = {
   listAllBookingsForExport,
   listAuditLog,
   listAuditForExport,
+  listBookingsForCalendar,
   updateBookingStatus,
   logAudit,
   getDashboardStats,

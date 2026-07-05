@@ -114,6 +114,8 @@ function formatStatusLabel(status) {
   return labels[status] || status;
 }
 
+const { buildWhatsAppCalendarBlock, buildGoogleCalendarUrl } = require('./calendar');
+
 function buildNewBookingText(booking) {
   return [
     `🔧 *NEW REPAIR REQUEST — ${BUSINESS_NAME}*`,
@@ -128,7 +130,23 @@ function buildNewBookingText(booking) {
     '',
     '*Problem:*',
     booking.issue,
+    buildWhatsAppCalendarBlock(booking),
   ].join('\n');
+}
+
+async function sendCalendarAlert(to, booking) {
+  const googleUrl = buildGoogleCalendarUrl(booking);
+  const text = [
+    `📅 *Calendar — ${booking.ticketId}*`,
+    `Tap to add this repair job to your phone calendar:`,
+    googleUrl,
+  ].join('\n');
+
+  return sendRequest({
+    to: normalizePhone(to),
+    type: 'text',
+    text: { preview_url: true, body: text.slice(0, 4096) },
+  });
 }
 
 function buildStatusUpdateText(booking, status) {
@@ -152,6 +170,7 @@ async function notifyNewBooking(booking) {
   }
 
   const text = buildNewBookingText(booking);
+  const calendarBlock = buildWhatsAppCalendarBlock(booking);
 
   if (TEMPLATE_NEW_BOOKING) {
     const params = [
@@ -163,13 +182,20 @@ async function notifyNewBooking(booking) {
       booking.timeslot,
       booking.issue.slice(0, 200),
     ];
-    const result = await sendToRecipients(NOTIFY_NUMBERS, (to) =>
-      sendTemplateMessage(to, TEMPLATE_NEW_BOOKING, params)
-    );
+    const result = await sendToRecipients(NOTIFY_NUMBERS, async (to) => {
+      await sendTemplateMessage(to, TEMPLATE_NEW_BOOKING, params);
+      await sendCalendarAlert(to, booking);
+    });
     return { sent: result.sent > 0, ...result, mode: 'template' };
   }
 
-  const result = await sendToRecipients(NOTIFY_NUMBERS, (to) => sendTextMessage(to, text));
+  const result = await sendToRecipients(NOTIFY_NUMBERS, async (to) => {
+    await sendRequest({
+      to: normalizePhone(to),
+      type: 'text',
+      text: { preview_url: true, body: text.slice(0, 4096) },
+    });
+  });
   return { sent: result.sent > 0, ...result, mode: 'text' };
 }
 

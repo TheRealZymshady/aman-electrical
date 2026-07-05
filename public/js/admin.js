@@ -13,6 +13,7 @@ const ordersBody = document.getElementById('ordersBody');
 const auditBody = document.getElementById('auditBody');
 const ordersPanel = document.getElementById('ordersPanel');
 const auditPanel = document.getElementById('auditPanel');
+const calendarPanel = document.getElementById('calendarPanel');
 
 function showAlert(msg, type) {
   globalAlert.textContent = msg;
@@ -226,11 +227,56 @@ function downloadExport(type, format) {
     .catch(function (err) { showAlert(err.message, 'error'); });
 }
 
+async function loadCalendar() {
+  const res = await apiFetch('/api/admin/calendar');
+  const data = await res.json();
+  const statusEl = document.getElementById('calendarStatus');
+  const notConfigured = document.getElementById('calendarNotConfigured');
+  const urlsEl = document.getElementById('calendarUrls');
+  const setupEl = document.getElementById('calendarSetup');
+
+  statusEl.classList.add('hidden');
+  notConfigured.classList.add('hidden');
+  urlsEl.classList.add('hidden');
+
+  if (data.googleCalendarConfigured) {
+    statusEl.textContent = 'Google Calendar auto-sync is ON — new bookings are added to your team calendar automatically.';
+    statusEl.classList.remove('hidden');
+  }
+
+  if (data.feedConfigured && data.feedUrls) {
+    document.getElementById('calWebcal').value = data.feedUrls.webcal;
+    document.getElementById('calHttps').value = data.feedUrls.https;
+    document.getElementById('calGoogleOpen').href = data.feedUrls.googleSubscribe;
+    urlsEl.classList.remove('hidden');
+  } else if (!data.googleCalendarConfigured) {
+    notConfigured.classList.remove('hidden');
+  }
+
+  if (data.setup) {
+    setupEl.innerHTML = [
+      '<strong>WhatsApp (per booking):</strong> ' + data.setup.oneTime,
+      '<br><br><strong>iPhone:</strong> ' + data.setup.iphone,
+      '<br><br><strong>Google Calendar:</strong> ' + data.setup.google,
+    ].join('');
+  }
+}
+
+function copyInput(id) {
+  const input = document.getElementById(id);
+  input.select();
+  navigator.clipboard.writeText(input.value).then(function () {
+    showAlert('Copied to clipboard');
+  }).catch(function () {
+    showAlert('Copy failed — select and copy manually', 'error');
+  });
+}
+
 async function initDashboard() {
   loginView.classList.add('hidden');
   dashboardView.classList.remove('hidden');
   try {
-    await Promise.all([loadStats(), loadOrders(), loadAudit()]);
+    await Promise.all([loadStats(), loadOrders(), loadAudit(), loadCalendar()]);
   } catch (err) {
     showAlert(err.message, 'error');
   }
@@ -267,6 +313,8 @@ document.getElementById('exportBookingsCsv').addEventListener('click', function 
 document.getElementById('exportBookingsJson').addEventListener('click', function () { downloadExport('bookings', 'json'); });
 document.getElementById('exportAuditCsv').addEventListener('click', function () { downloadExport('audit', 'csv'); });
 document.getElementById('exportAuditJson').addEventListener('click', function () { downloadExport('audit', 'json'); });
+document.getElementById('copyWebcal').addEventListener('click', function () { copyInput('calWebcal'); });
+document.getElementById('copyHttps').addEventListener('click', function () { copyInput('calHttps'); });
 
 document.querySelectorAll('.tab').forEach(function (tab) {
   tab.addEventListener('click', function () {
@@ -275,6 +323,8 @@ document.querySelectorAll('.tab').forEach(function (tab) {
     const panel = tab.dataset.panel;
     ordersPanel.classList.toggle('hidden', panel !== 'orders');
     auditPanel.classList.toggle('hidden', panel !== 'audit');
+    calendarPanel.classList.toggle('hidden', panel !== 'calendar');
+    if (panel === 'calendar') loadCalendar();
   });
 });
 

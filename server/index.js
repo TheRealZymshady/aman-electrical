@@ -20,11 +20,14 @@ const {
   listAllBookingsForExport,
   listAuditLog,
   listAuditForExport,
+  listBookingsForCalendar,
   updateBookingStatus,
   logAudit,
   getDashboardStats,
 } = require('./db');
 const { buildReceiptHtml, bookingsToCsv, auditToCsv } = require('./receipt');
+const { buildBookingIcs, buildIcsCalendar, buildFeedUrls } = require('./calendar');
+const { syncBookingToCalendar, isConfigured: googleCalendarReady } = require('./googleCalendar');
 const {
   validateBookingPayload,
   validateStatusLookup,
@@ -38,6 +41,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProd = NODE_ENV === 'production';
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '601128731020';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || '';
+const CALENDAR_FEED_TOKEN = process.env.CALENDAR_FEED_TOKEN || '';
 const CSRF_SECRET = process.env.CSRF_SECRET || crypto.randomBytes(32).toString('hex');
 
 if (isProd && (!process.env.CSRF_SECRET || !ADMIN_API_KEY)) {
@@ -125,6 +129,16 @@ function hashIp(ip) {
   return crypto.createHash('sha256').update(String(ip) + CSRF_SECRET).digest('hex').slice(0, 16);
 }
 
+function requireCalendarFeed(req, res, next) {
+  const token = String(req.query.token || req.get('authorization')?.replace(/^Bearer\s+/i, '') || '');
+  if (!CALENDAR_FEED_TOKEN || !token || token.length !== CALENDAR_FEED_TOKEN.length) {
+    return res.status(401).json({ error: 'Invalid calendar feed token.' });
+  }
+  const valid = crypto.timingSafeEqual(Buffer.from(token), Buffer.from(CALENDAR_FEED_TOKEN));
+  if (!valid) return res.status(401).json({ error: 'Invalid calendar feed token.' });
+  next();
+}
+
 function requireAdmin(req, res, next) {
   const auth = req.get('authorization') || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
@@ -192,8 +206,9 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
     return res.status(500).json({ error: 'Unable to create work order. Please try again.' });
   }
 
-  const booking = { ticketId, ...result.data };
+  const booking = { ticketId, receiptNo, ...result.data };
   let whatsappNotified = false;
+  let calendarSynced = false;
 
   try {
     const notifyResult = await Promise.race([
@@ -205,6 +220,25 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
     console.warn('WhatsApp team alert failed:', err.message);
   }
 
+  try {
+    const calResult = await Promise.race([
+      syncBookingToCalendar(booking),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+    ]);
+    calendarSynced = Boolean(calResult?.created);
+    if (calendarSynced) {
+      logAudit({
+        ticketId,
+        receiptNo,
+        action: 'calendar_event_created',
+        details: { eventId: calResult.eventId },
+        actor: 'system',
+      });
+    }
+  } catch (err) {
+    console.warn('Calendar sync failed:', err.message);
+  }
+
   const phoneLast4 = result.data.phone.replace(/\D/g, '').slice(-4);
   res.status(201).json({
     ticketId,
@@ -213,6 +247,7 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
     message: 'Booking received successfully.',
     whatsappNumber: WHATSAPP_NUMBER,
     whatsappNotified,
+    calendarSynced,
     whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildNewBookingText(booking))}`,
   });
 });
@@ -282,6 +317,41 @@ app.get('/api/receipt', receiptLimiter, (req, res) => {
 
   res.set('Content-Type', 'text/html; charset=utf-8');
   res.send(buildReceiptHtml(booking, { verified: true }));
+});
+
+app.get('/api/calendar/feed.ics', requireCalendarFeed, (_req, res) => {
+  const bookings = listBookingsForCalendar.all();
+  const ics = buildIcsCalendar(bookings, 'Aman Electrical — Repair Jobs');
+  res.set('Content-Type', 'text/calendar; charset=utf-8');
+  res.set('Content-Disposition', 'inline; filename="aman-jobs.ics"');
+  res.set('Cache-Control', 'private, max-age=300');
+  res.send(ics);
+});
+
+app.get('/api/calendar/:ticketId.ics', (req, res) => {
+  const ticketRaw = String(req.params.ticketId || '').replace(/\.ics$/i, '').trim().toUpperCase();
+  const ticketId = ticketRaw.startsWith('FX-') ? ticketRaw : `FX-${ticketRaw}`;
+  const booking = getBookingFullByTicket.get(ticketId);
+  if (!booking) return res.status(404).json({ error: 'Booking not found.' });
+
+  res.set('Content-Type', 'text/calendar; charset=utf-8');
+  res.set('Content-Disposition', `attachment; filename="${ticketId}.ics"`);
+  res.send(buildBookingIcs(booking));
+});
+
+app.get('/api/admin/calendar', requireAdmin, (req, res) => {
+  const token = CALENDAR_FEED_TOKEN;
+  const urls = token ? buildFeedUrls(req, token) : null;
+  res.json({
+    googleCalendarConfigured: googleCalendarReady(),
+    feedConfigured: Boolean(token),
+    feedUrls: urls,
+    setup: {
+      iphone: 'Settings → Calendar → Accounts → Add Subscribed Calendar → paste the webcal URL',
+      google: 'Google Calendar → Settings → Add calendar → From URL → paste the https feed URL',
+      oneTime: 'Each WhatsApp booking alert includes a Google Calendar link — tap it to add that job instantly',
+    },
+  });
 });
 
 app.get('/api/admin/stats', requireAdmin, (_req, res) => {
@@ -429,6 +499,11 @@ app.listen(PORT, () => {
   console.log(`Aman Electrical live at ${publicUrl} (${NODE_ENV})`);
   if (!whatsappReady()) {
     console.log('WhatsApp API: not configured — bookings use wa.me links to notify the team.');
+  }
+  if (googleCalendarReady()) {
+    console.log('Google Calendar: auto-sync enabled for new bookings.');
+  } else if (CALENDAR_FEED_TOKEN) {
+    console.log('Calendar feed: technicians can subscribe to /api/calendar/feed.ics');
   }
   if (!isProd) {
     console.log('Set CSRF_SECRET and ADMIN_API_KEY in .env before production deploy.');

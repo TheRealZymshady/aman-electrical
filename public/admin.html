@@ -62,6 +62,7 @@
     <div class="tabs">
       <button type="button" class="tab active" data-panel="orders">Orders</button>
       <button type="button" class="tab" data-panel="audit">Audit log</button>
+      <button type="button" class="tab" data-panel="calendar">Calendar</button>
     </div>
 
     <div id="ordersPanel">
@@ -102,6 +103,33 @@
           </thead>
           <tbody id="auditBody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <div id="calendarPanel" class="hidden">
+      <div class="login-card" style="max-width:none;margin:0">
+        <h2 style="margin-bottom:8px">Technician calendar setup</h2>
+        <p style="color:var(--steel);font-size:14px;margin-bottom:20px">
+          New WhatsApp booking alerts include a Google Calendar link. For automatic sync of all jobs, subscribe once using the URLs below.
+        </p>
+        <div id="calendarStatus" class="alert alert-success hidden"></div>
+        <div id="calendarNotConfigured" class="alert alert-error hidden">
+          Calendar feed is not configured. Set <code>CALENDAR_FEED_TOKEN</code> in your Render environment variables, then redeploy.
+        </div>
+        <div id="calendarUrls" class="hidden">
+          <div class="field" style="margin-bottom:14px">
+            <label>iPhone / Apple Calendar (subscribe once)</label>
+            <input type="text" id="calWebcal" readonly style="width:100%">
+            <button type="button" class="btn btn-ghost btn-sm" id="copyWebcal" style="margin-top:8px">Copy webcal URL</button>
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label>Google Calendar (From URL)</label>
+            <input type="text" id="calHttps" readonly style="width:100%">
+            <button type="button" class="btn btn-ghost btn-sm" id="copyHttps" style="margin-top:8px">Copy https URL</button>
+          </div>
+          <a class="btn btn-primary" id="calGoogleOpen" href="#" target="_blank" rel="noopener noreferrer">Open in Google Calendar</a>
+        </div>
+        <div id="calendarSetup" style="margin-top:24px;font-size:14px;color:var(--steel)"></div>
       </div>
     </div>
   </div>
