@@ -44,7 +44,6 @@
       </button>
     </nav>
   </header>
-</div>
 
   <!-- ============== HERO ============== -->
   <section id="home" class="hero">
@@ -359,7 +358,10 @@
             <label for="statusPhone" data-i18n="status.phoneLabel">Phone (last 4 digits)</label>
             <input type="text" id="statusPhone" name="phoneLast4" data-i18n-placeholder="status.phonePh" placeholder="6789" required maxlength="4" pattern="[0-9]{4}" inputmode="numeric" autocomplete="off">
           </div>
-          <button type="submit" class="btn btn-primary" id="statusBtn" data-i18n="status.check">Check status</button>
+          <div class="field status-submit">
+            <label aria-hidden="true">&nbsp;</label>
+            <button type="submit" class="btn btn-primary" id="statusBtn" data-i18n="status.check">Check status</button>
+          </div>
         </form>
         <div id="statusResult" class="status-result" role="status" aria-live="polite"></div>
       </div>

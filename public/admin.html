@@ -29,7 +29,7 @@
           <label for="apiKey">API key</label>
           <input type="password" id="apiKey" name="apiKey" required autocomplete="off" class="input-full">
         </div>
-        <button type="submit" class="btn btn-primary">Sign in</button>
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
       </form>
     </div>
   </div>
@@ -67,8 +67,14 @@
             <label for="filterTo">To</label>
             <input type="date" id="filterTo">
           </div>
-          <button type="button" class="btn btn-ghost" id="applyFilters">Apply</button>
-          <button type="button" class="btn btn-ghost" id="refreshBtn">Refresh</button>
+          <div class="field toolbar-action">
+            <label aria-hidden="true">&nbsp;</label>
+            <button type="button" class="btn btn-ghost" id="applyFilters">Apply</button>
+          </div>
+          <div class="field toolbar-action">
+            <label aria-hidden="true">&nbsp;</label>
+            <button type="button" class="btn btn-ghost" id="refreshBtn">Refresh</button>
+          </div>
           <span id="liveIndicator" class="live-indicator hidden" aria-live="polite">
             <span class="live-dot" aria-hidden="true"></span>
             <span>Live</span>
