@@ -19,11 +19,6 @@
         waPrefill: 'Hi Aman Electrical, I need help with an appliance.',
         leadTech: 'Lead Technician', fieldTech: 'Field Technician',
       },
-      panel: {
-        title: "Today's queue",
-        job1: 'Washing machine — not spinning', job2: 'Refrigerator — not cooling', job3: 'Dishwasher — leaking',
-        inProgress: 'In progress', scheduled: 'Scheduled', fixed: 'Fixed',
-      },
       showcase: {
         washTitle: 'Washing Machines', washDesc: 'Front load, top load, all major brands — fixed fast.',
         fridgeTitle: 'Refrigerators', fridgeDesc: 'Not cooling, leaking, or noisy — diagnosed and repaired on the spot.',
@@ -136,11 +131,6 @@
         bookBtn: 'Tempah servis →', waBtn: 'Sembang di WhatsApp',
         waPrefill: 'Hai Aman Electrical, saya perlukan bantuan dengan peralatan saya.',
         leadTech: 'Juruteknik Utama', fieldTech: 'Juruteknik Lapangan',
-      },
-      panel: {
-        title: 'Giliran hari ini',
-        job1: 'Mesin basuh — tidak berpusing', job2: 'Peti sejuk — tidak sejuk', job3: 'Mesin basuh pinggan — bocor',
-        inProgress: 'Dalam proses', scheduled: 'Dijadualkan', fixed: 'Siap',
       },
       showcase: {
         washTitle: 'Mesin Basuh', washDesc: 'Muatan hadapan, muatan atas, semua jenama utama — dibaiki dengan cepat.',

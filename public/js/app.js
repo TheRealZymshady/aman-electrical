@@ -316,8 +316,6 @@ async function initApp() {
     console.warn('Could not load security token; form submission may fail.');
   }
 
-  ticketNum = 'FX-' + String(Math.floor(1000 + Math.random() * 9000));
-  document.getElementById('ticketNum').textContent = ticketNum.slice(3);
   connectPublicSse();
 }
 
@@ -379,8 +377,9 @@ form.addEventListener('submit', async function (event) {
 
     form.reset();
     dateInput.setAttribute('min', today);
+    document.getElementById('ticketNum').textContent = '—';
     I18n.applyTranslations();
-    ticketNum = ticketId;
+    ticketNum = '';
   } catch (err) {
     showMessage(confirmMsg, 'error', err.message || I18n.t('alerts.submitFail'));
   } finally {

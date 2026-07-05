@@ -353,34 +353,41 @@ async function loadCalendar() {
   const notConfigured = document.getElementById('calendarNotConfigured');
   const urlsEl = document.getElementById('calendarUrls');
   const setupEl = document.getElementById('calendarSetup');
+  const googleOpen = document.getElementById('calGoogleOpen');
 
   statusEl.classList.add('hidden');
   notConfigured.classList.add('hidden');
   urlsEl.classList.add('hidden');
   setupEl.textContent = '';
+  document.getElementById('calWebcal').value = '';
+  document.getElementById('calHttps').value = '';
+  googleOpen.removeAttribute('href');
 
   try {
     const data = await apiJson('/api/admin/calendar');
+    const feedReady = Boolean(data.feedConfigured && data.feedUrls && data.feedUrls.https);
 
     if (data.googleCalendarConfigured) {
       statusEl.textContent = 'Google Calendar auto-sync is enabled — new bookings are added automatically.';
       statusEl.classList.remove('hidden');
     }
 
-    if (data.feedConfigured && data.feedUrls) {
+    if (feedReady) {
       document.getElementById('calWebcal').value = data.feedUrls.webcal;
       document.getElementById('calHttps').value = data.feedUrls.https;
-      document.getElementById('calGoogleOpen').href = data.feedUrls.googleSubscribe;
+      googleOpen.href = data.feedUrls.googleSubscribe;
       urlsEl.classList.remove('hidden');
-    } else if (!data.googleCalendarConfigured) {
+    } else {
       notConfigured.classList.remove('hidden');
     }
 
     if (data.setup) {
       const lines = [];
       if (data.setup.oneTime) lines.push('WhatsApp (per booking): ' + data.setup.oneTime);
-      if (data.setup.iphone) lines.push('iPhone: ' + data.setup.iphone);
-      if (data.setup.google) lines.push('Google Calendar: ' + data.setup.google);
+      if (feedReady) {
+        if (data.setup.iphone) lines.push('iPhone: ' + data.setup.iphone);
+        if (data.setup.google) lines.push('Google Calendar: ' + data.setup.google);
+      }
       setupEl.innerHTML = lines.map(function (line) {
         const idx = line.indexOf(': ');
         if (idx === -1) return line;
@@ -414,12 +421,14 @@ function switchPanel(panel) {
   ordersPanel.classList.toggle('hidden', panel !== 'orders');
   auditPanel.classList.toggle('hidden', panel !== 'audit');
   calendarPanel.classList.toggle('hidden', panel !== 'calendar');
+  if (panel === 'audit') loadAudit();
   if (panel === 'calendar') loadCalendar();
 }
 
 async function refreshDashboard() {
   try {
-    const tasks = [loadSummary(), loadOrders(), loadAudit()];
+    const tasks = [loadSummary(), loadOrders()];
+    if (activePanel === 'audit') tasks.push(loadAudit());
     if (activePanel === 'calendar') tasks.push(loadCalendar());
     await Promise.all(tasks);
   } catch (err) {
