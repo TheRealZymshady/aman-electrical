@@ -30,15 +30,17 @@
         <button type="button" class="lang-btn" data-lang="ms" aria-pressed="false">BM</button>
       </div>
       <div class="nav-links" id="navLinks">
-        <a href="#home">Home</a>
-        <a href="#services">Services</a>
-        <a href="#how">How it works</a>
-        <a href="#book">Book a repair</a>
-        <a href="#status">Track booking</a>
-        <a href="#contact">Contact</a>
-        <a href="#book" class="nav-cta nav-cta-mobile">Book repair</a>
+        <a href="#home" data-i18n="nav.home">Home</a>
+        <a href="#services" data-i18n="nav.services">Services</a>
+        <a href="#area" data-i18n="nav.area">Service area</a>
+        <a href="#how" data-i18n="nav.how">How it works</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        <a href="#book" data-i18n="nav.book">Book a repair</a>
+        <a href="#status" data-i18n="nav.track">Track booking</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+        <a href="#book" class="nav-cta nav-cta-mobile" data-i18n="nav.bookCta">Book repair</a>
       </div>
-      <a href="#book" class="nav-cta nav-cta-desktop">Book repair</a>
+      <a href="#book" class="nav-cta nav-cta-desktop" data-i18n="nav.bookCta">Book repair</a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -50,75 +52,15 @@
     <div class="wrap hero-grid">
       <div>
         <p class="hero-tagline" data-i18n="signboard.sub">Appliance Repair &amp; Service</p>
-        <div class="eyebrow fade-in"><span class="blink"></span> <span data-i18n="hero.eyebrow">Technicians available today</span></div>
-        <h1 data-i18n-html="hero.title">Washing machine acting up? <span>We're on our way.</span></h1>
-        <p class="lead">
-          Aman Electrical, led by <strong>Amir Muazzam</strong>, repairs washing machines,
-          refrigerators, and home appliances — same-week visits, upfront pricing, no guesswork.
+        <p class="eyebrow area-badge fade-in" data-i18n="hero.eyebrow">Klang Valley · Home visits</p>
+        <h1 data-i18n-html="hero.title">Broken appliance at home? <span>Book a repair visit.</span></h1>
+        <p class="lead" data-i18n="hero.lead">
+          Aman Electrical repairs washing machines, refrigerators, air conditioners, and more — at your doorstep across Klang Valley. Upfront quote before work starts, backed by a 90-day warranty.
         </p>
         <div class="hero-actions">
-          <a href="#book" class="btn btn-primary">Book a repair →</a>
-          <a href="https://wa.me/601128731020?text=Hi%20Aman%20Electrical%2C%20I%20need%20help%20with%20an%20appliance." target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Chat on WhatsApp</a>
+          <a href="#book" class="btn btn-primary" data-i18n="hero.bookBtn">Book a repair →</a>
+          <a href="https://wa.me/601128731020?text=Hi%20Aman%20Electrical%2C%20I%20need%20help%20with%20an%20appliance." target="_blank" rel="noopener noreferrer" class="btn btn-ghost" id="waHeroBtn" data-i18n="hero.waBtn">WhatsApp us</a>
         </div>
-
-        <div class="tech-contacts">
-          <a href="https://wa.me/601128731020" target="_blank" class="tech-card">
-            <span class="tech-wa-icon">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
-            </span>
-            <span class="tech-info">
-              <span class="tech-name">Amir Muazzam</span>
-              <span class="tech-role"><span data-i18n="hero.leadTech">Lead Technician</span> · 011-2873102</span>
-            </span>
-          </a>
-          <a href="https://wa.me/601162021508" target="_blank" class="tech-card">
-            <span class="tech-wa-icon">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
-            </span>
-            <span class="tech-info">
-              <span class="tech-name">Technician 2</span>
-              <span class="tech-role"><span data-i18n="hero.fieldTech">Field Technician</span> · 011-6202150</span>
-            </span>
-          </a>
-          <a href="https://wa.me/60187664947" target="_blank" class="tech-card">
-            <span class="tech-wa-icon">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
-            </span>
-            <span class="tech-info">
-              <span class="tech-name">Technician 3</span>
-              <span class="tech-role"><span data-i18n="hero.fieldTech">Field Technician</span> · 018-7664947</span>
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== APPLIANCE SHOWCASE ============== -->
-  <section class="showcase">
-    <div class="wrap showcase-grid">
-      <div class="showcase-item fade-in scale-in">
-        <svg class="showcase-icon" viewBox="0 0 100 100" width="84" height="84" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="14" y="10" width="72" height="80" rx="6"/>
-          <line x1="14" y1="26" x2="86" y2="26"/>
-          <circle cx="24" cy="18" r="2.5" fill="currentColor" stroke="none"/>
-          <circle cx="33" cy="18" r="2.5" fill="currentColor" stroke="none"/>
-          <circle cx="50" cy="58" r="22"/>
-          <circle cx="50" cy="58" r="14"/>
-          <path d="M50 50 Q56 58 50 66 Q44 58 50 50 Z"/>
-        </svg>
-        <h3 data-i18n="showcase.washTitle">Washing Machines</h3>
-        <p data-i18n="showcase.washDesc">Front load, top load, all major brands — fixed fast.</p>
-      </div>
-      <div class="showcase-item fade-in scale-in">
-        <svg class="showcase-icon" viewBox="0 0 100 100" width="84" height="84" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="22" y="6" width="56" height="88" rx="6"/>
-          <line x1="22" y1="38" x2="78" y2="38"/>
-          <line x1="32" y1="16" x2="32" y2="28"/>
-          <line x1="32" y1="48" x2="32" y2="64"/>
-        </svg>
-        <h3 data-i18n="showcase.fridgeTitle">Refrigerators</h3>
-        <p data-i18n="showcase.fridgeDesc">Not cooling, leaking, or noisy — diagnosed and repaired on the spot.</p>
       </div>
     </div>
   </section>
@@ -132,63 +74,74 @@
       <div><div class="trust-num" data-i18n="trust.num4">On-site</div><div class="trust-label" data-i18n="trust.label4">Diagnosis & repair</div></div>
     </div>
   </div>
-  <!-- ============== WHY CHOOSE US ============== -->
-  <div class="why-us">
-    <div class="wrap">
-      <ul class="why-list">
-        <li><span class="why-icon">✓</span> <span data-i18n="why.item1">Technician comes straight to your home</span></li>
-        <li><span class="why-icon">✓</span> <span data-i18n="why.item2">No need to bring it to a shop</span></li>
-        <li><span class="why-icon">✓</span> <span data-i18n="why.item3">90-day warranty on every repair</span></li>
-        <li><span class="why-icon">✓</span> <span data-i18n="why.item4">Free advice and consultation</span></li>
-      </ul>
-    </div>
-  </div>
 
   <!-- ============== SERVICES ============== -->
   <section id="services">
     <div class="wrap">
       <div class="section-head">
-        <span class="section-tag">What we fix</span>
+        <span class="section-tag" data-i18n="services.tag">What we fix</span>
         <h2 data-i18n="services.title">Built for the appliances that can't wait</h2>
       </div>
       <div class="services-grid">
-        <div class="service-card" data-appliance="Washing machine" tabindex="0" role="button" aria-label="Book repair for washing machine">
+        <div class="service-card" data-appliance="Washing machine" tabindex="0" role="button" data-i18n-aria="services.ariaWash">
           <div class="service-icon">🧺</div>
-          <h3>Washing machines</h3>
-          <p>Not spinning, draining, or leaking — front load and top load, all major brands.</p>
-          <span class="book-tag">Book this repair →</span>
+          <h3 data-i18n="services.wash">Washing machines</h3>
+          <p data-i18n="services.washDesc">Not spinning, draining, or leaking — front load and top load, all major brands.</p>
+          <span class="book-tag" data-i18n="services.bookTag">Book this repair →</span>
         </div>
-        <div class="service-card" data-appliance="Refrigerator" tabindex="0" role="button" aria-label="Book repair for refrigerator">
+        <div class="service-card" data-appliance="Refrigerator" tabindex="0" role="button" data-i18n-aria="services.ariaFridge">
           <div class="service-icon">🧊</div>
-          <h3>Refrigerators</h3>
-          <p>Not cooling, ice buildup, strange noises, or door seal issues.</p>
-          <span class="book-tag">Book this repair →</span>
+          <h3 data-i18n="services.fridge">Refrigerators</h3>
+          <p data-i18n="services.fridgeDesc">Not cooling, ice buildup, strange noises, or door seal issues.</p>
+          <span class="book-tag" data-i18n="services.bookTag">Book this repair →</span>
         </div>
-        <div class="service-card" data-appliance="Dishwasher" tabindex="0" role="button" aria-label="Book repair for dishwasher">
+        <div class="service-card" data-appliance="Dishwasher" tabindex="0" role="button" data-i18n-aria="services.ariaDish">
           <div class="service-icon">🍽️</div>
-          <h3>Dishwashers</h3>
-          <p>Won't drain, won't start, or leaving dishes dirty after a cycle.</p>
-          <span class="book-tag">Book this repair →</span>
+          <h3 data-i18n="services.dish">Dishwashers</h3>
+          <p data-i18n="services.dishDesc">Won't drain, won't start, or leaving dishes dirty after a cycle.</p>
+          <span class="book-tag" data-i18n="services.bookTag">Book this repair →</span>
         </div>
-        <div class="service-card" data-appliance="Oven / stove" tabindex="0" role="button" aria-label="Book repair for oven or stove">
+        <div class="service-card" data-appliance="Oven / stove" tabindex="0" role="button" data-i18n-aria="services.ariaOven">
           <div class="service-icon">🔥</div>
-          <h3>Ovens &amp; stoves</h3>
-          <p>Uneven heating, ignition problems, faulty thermostats.</p>
-          <span class="book-tag">Book this repair →</span>
+          <h3 data-i18n="services.oven">Ovens &amp; stoves</h3>
+          <p data-i18n="services.ovenDesc">Uneven heating, ignition problems, faulty thermostats.</p>
+          <span class="book-tag" data-i18n="services.bookTag">Book this repair →</span>
         </div>
-        <div class="service-card" data-appliance="Air conditioner" tabindex="0" role="button" aria-label="Book repair for air conditioner">
+        <div class="service-card" data-appliance="Air conditioner" tabindex="0" role="button" data-i18n-aria="services.ariaAc">
           <div class="service-icon">❄️</div>
-          <h3>Air conditioners</h3>
-          <p>Not cooling, water leaks, or unusual noise from indoor/outdoor units.</p>
-          <span class="book-tag">Book this repair →</span>
+          <h3 data-i18n="services.ac">Air conditioners</h3>
+          <p data-i18n="services.acDesc">Not cooling, water leaks, or unusual noise from indoor/outdoor units.</p>
+          <span class="book-tag" data-i18n="services.bookTag">Book this repair →</span>
         </div>
-        <div class="service-card" data-appliance="Other" tabindex="0" role="button" aria-label="Book general diagnosis">
+        <div class="service-card" data-appliance="Other" tabindex="0" role="button" data-i18n-aria="services.ariaGeneral">
           <div class="service-icon">🛠️</div>
-          <h3>General diagnosis</h3>
-          <p>Not sure what's wrong? We'll inspect and quote before any work starts.</p>
-          <span class="book-tag">Book this repair →</span>
+          <h3 data-i18n="services.general">General diagnosis</h3>
+          <p data-i18n="services.generalDesc">Not sure what's wrong? We'll inspect and quote before any work starts.</p>
+          <span class="book-tag" data-i18n="services.bookTag">Book this repair →</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ============== SERVICE AREA ============== -->
+  <section class="area-section" id="area">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag" data-i18n="area.tag">Where we serve</span>
+        <h2 data-i18n="area.title">Home visits across Klang Valley</h2>
+        <p class="section-lead" data-i18n="area.lead">We come to you — no need to haul a heavy appliance to a shop. Not sure if we cover your area? WhatsApp us with your postcode.</p>
+      </div>
+      <ul class="area-grid">
+        <li data-i18n="area.kl">Kuala Lumpur</li>
+        <li data-i18n="area.pj">Petaling Jaya</li>
+        <li data-i18n="area.shahAlam">Shah Alam</li>
+        <li data-i18n="area.subang">Subang Jaya</li>
+        <li data-i18n="area.klang">Klang &amp; Port Klang</li>
+        <li data-i18n="area.puchong">Puchong &amp; Seri Kembangan</li>
+        <li data-i18n="area.ampang">Ampang &amp; Cheras</li>
+        <li data-i18n="area.kajang">Kajang &amp; Bangi</li>
+      </ul>
+      <p class="area-note" data-i18n="area.note">Outside these areas? Message us — we may still be able to help.</p>
     </div>
   </section>
 
@@ -196,25 +149,61 @@
   <section class="how-it-works" id="how">
     <div class="wrap">
       <div class="section-head" style="text-align:center; max-width:100%;">
-        <span class="section-tag">Simple process</span>
+        <span class="section-tag" data-i18n="how.tag">Simple process</span>
         <h2 data-i18n="how.title">From broken to fixed in 3 steps</h2>
       </div>
       <div class="steps-grid">
         <div class="step-card fade-in">
           <div class="step-num">1</div>
-          <h3>Tell us the problem</h3>
-          <p>Fill in the form or message us on WhatsApp with your appliance issue and location.</p>
+          <h3 data-i18n="how.step1Title">Tell us the problem</h3>
+          <p data-i18n="how.step1Desc">Fill in the form or message us on WhatsApp with your appliance issue and location.</p>
         </div>
         <div class="step-card fade-in">
           <div class="step-num">2</div>
-          <h3>We confirm your slot</h3>
-          <p>Our team calls back within 30 minutes to schedule a convenient visit time.</p>
+          <h3 data-i18n="how.step2Title">We confirm your slot</h3>
+          <p data-i18n="how.step2Desc">Our team calls back within 30 minutes to schedule a convenient visit time.</p>
         </div>
         <div class="step-card fade-in">
           <div class="step-num">3</div>
-          <h3>Technician comes to you</h3>
-          <p>We diagnose on-site, quote upfront, and fix it — backed by a 90-day warranty.</p>
+          <h3 data-i18n="how.step3Title">Technician comes to you</h3>
+          <p data-i18n="how.step3Desc">We diagnose on-site, quote upfront, and fix it — backed by a 90-day warranty.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FAQ ============== -->
+  <section class="faq-section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag" data-i18n="faq.tag">Common questions</span>
+        <h2 data-i18n="faq.title">Before you book</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary data-i18n="faq.q1">How much does a repair cost?</summary>
+          <p data-i18n="faq.a1">We diagnose on-site and give you an upfront quote before any work begins. No hidden fees — you decide whether to proceed.</p>
+        </details>
+        <details class="faq-item">
+          <summary data-i18n="faq.q2">Which areas do you cover?</summary>
+          <p data-i18n="faq.a2">We serve homes across Klang Valley, including KL, Petaling Jaya, Shah Alam, Subang Jaya, Klang, Puchong, Ampang, Cheras, and Kajang. WhatsApp us if your area is not listed.</p>
+        </details>
+        <details class="faq-item">
+          <summary data-i18n="faq.q3">What warranty do you offer?</summary>
+          <p data-i18n="faq.a3">Every completed repair includes a 90-day warranty on workmanship. If the same issue returns within that period, contact us with your work order number.</p>
+        </details>
+        <details class="faq-item">
+          <summary data-i18n="faq.q4">How soon can you visit?</summary>
+          <p data-i18n="faq.a4">Most visits are scheduled within the same week. Submit the form or WhatsApp us — we typically call back within 30 minutes to confirm a date and time slot.</p>
+        </details>
+        <details class="faq-item">
+          <summary data-i18n="faq.q5">What should I prepare before the visit?</summary>
+          <p data-i18n="faq.a5">Make sure the technician can reach the appliance easily. If you know the brand and model, have that ready. A brief description of the problem helps us come prepared.</p>
+        </details>
+        <details class="faq-item">
+          <summary data-i18n="faq.q6">What if it cannot be fixed on the first visit?</summary>
+          <p data-i18n="faq.a6">Some repairs need parts that are not on hand. We will explain the options, quote any parts and labour, and arrange a follow-up visit once parts arrive.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -271,6 +260,15 @@
               <option value="Flexible - any time" data-i18n="timeslots.flexible">Flexible — any time</option>
             </select>
           </div>
+          <div class="field">
+            <label for="urgency" data-i18n="form.urgency">How urgent is this?</label>
+            <select id="urgency">
+              <option value="" selected data-i18n="form.selectUrgency">Select urgency (optional)</option>
+              <option value="standard" data-i18n="form.urgencyStandard">Standard — within the week</option>
+              <option value="soon" data-i18n="form.urgencySoon">Soon — within 2–3 days</option>
+              <option value="emergency" data-i18n="form.urgencyEmergency">Urgent — today or tomorrow if possible</option>
+            </select>
+          </div>
           <div class="field full">
             <label for="issue" data-i18n="form.issue">Describe the problem</label>
             <textarea id="issue" name="issue" data-i18n-placeholder="form.issuePh" placeholder="e.g. Washing machine stops mid-cycle and won't spin." required minlength="10" maxlength="1000"></textarea>
@@ -279,8 +277,8 @@
           <div id="confirmMsg"></div>
 
           <div class="submit-row">
-            <button type="submit" class="btn btn-primary" id="submitBtn">Submit booking</button>
-            <span class="form-note">Our team gets a WhatsApp alert instantly. We usually call back within 30 minutes.</span>
+            <button type="submit" class="btn btn-primary" id="submitBtn" data-i18n="form.submit">Submit booking</button>
+            <span class="form-note" data-i18n="form.note">Our team gets a WhatsApp alert instantly. We usually call back within 30 minutes.</span>
           </div>
         </form>
       </div>
@@ -291,7 +289,7 @@
   <section class="status-section" id="status">
     <div class="wrap">
       <div class="section-head">
-        <span class="section-tag">Track your repair</span>
+        <span class="section-tag" data-i18n="status.tag">Track your repair</span>
         <h2 data-i18n="status.title">Check booking status</h2>
       </div>
       <div class="status-card">
@@ -316,18 +314,60 @@
     </div>
   </section>
 
+  <!-- ============== CONTACT STRIP ============== -->
+  <section class="contact-strip" id="contact">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-tag" data-i18n="contact.tag">Get in touch</span>
+        <h2 data-i18n="contact.title">Prefer to talk first?</h2>
+        <p class="section-lead" data-i18n="contact.lead">Message us on WhatsApp or call — same numbers our team uses for booking confirmations.</p>
+      </div>
+      <div class="contact-cards">
+        <a href="https://wa.me/601128731020" target="_blank" rel="noopener noreferrer" class="tech-card">
+          <span class="tech-wa-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
+          </span>
+          <span class="tech-info">
+            <span class="tech-name">Amir Muazzam</span>
+            <span class="tech-role"><span data-i18n="hero.leadTech">Lead Technician</span> · <span data-i18n="contact.waLabel">WhatsApp</span> 011-2873102</span>
+          </span>
+        </a>
+        <a href="https://wa.me/601162021508" target="_blank" rel="noopener noreferrer" class="tech-card">
+          <span class="tech-wa-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
+          </span>
+          <span class="tech-info">
+            <span class="tech-name">Technician 2</span>
+            <span class="tech-role"><span data-i18n="hero.fieldTech">Field Technician</span> · <span data-i18n="contact.waLabel">WhatsApp</span> 011-6202150</span>
+          </span>
+        </a>
+        <a href="https://wa.me/60187664947" target="_blank" rel="noopener noreferrer" class="tech-card">
+          <span class="tech-wa-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
+          </span>
+          <span class="tech-info">
+            <span class="tech-name">Technician 3</span>
+            <span class="tech-role"><span data-i18n="hero.fieldTech">Field Technician</span> · <span data-i18n="contact.waLabel">WhatsApp</span> 018-7664947</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ============== FOOTER ============== -->
   <footer>
     <div class="wrap footer-grid">
       <div data-i18n="footer.copy">© 2026 Aman Electrical — Amir Muazzam</div>
-      <div class="footer-links" id="contact">
-        <a href="https://wa.me/601128731020" target="_blank" rel="noopener noreferrer">011-2873102</a>
-        <a href="https://wa.me/601162021508" target="_blank" rel="noopener noreferrer">011-6202150</a>
-        <a href="https://wa.me/60187664947" target="_blank" rel="noopener noreferrer">018-7664947</a>
+      <div class="footer-links">
+        <a href="https://wa.me/601128731020" target="_blank" rel="noopener noreferrer">WhatsApp · 011-2873102</a>
         <a href="#book" data-i18n="footer.book">Book repair</a>
       </div>
     </div>
   </footer>
+
+  <div class="sticky-cta" id="stickyCta" hidden>
+    <a href="#book" class="btn btn-primary btn-block" data-i18n="nav.bookCta">Book repair</a>
+  </div>
 
   <a href="https://wa.me/601128731020" class="wa-fab" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.85.5 3.58 1.36 5.07L2 22l5.2-1.36a9.84 9.84 0 0 0 4.84 1.27c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.76 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.13.11-1.82-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.16-4.93-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.74-2.12 1-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.45.51-.15.14-.3.29-.13.58.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.46.3.14.47.12.65-.07.18-.19.74-.85.94-1.14.2-.29.4-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>

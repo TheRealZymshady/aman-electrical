@@ -98,7 +98,7 @@ function formatDate(dateStr) {
 
 function buildWhatsAppMessage(data, ticketId) {
   const m = function (key) { return I18n.t('waMessage.' + key); };
-  return [
+  const lines = [
     m('header'),
     '',
     m('workOrder') + ' ' + ticketId,
@@ -108,10 +108,10 @@ function buildWhatsAppMessage(data, ticketId) {
     m('appliance') + ' ' + I18n.translateAppliance(data.appliance),
     m('date') + ' ' + formatDate(data.date),
     m('time') + ' ' + I18n.translateTimeslot(data.timeslot),
-    '',
-    m('problem'),
-    data.issue,
-  ].join('\n');
+  ];
+  if (data.urgency) lines.push(m('urgency') + ' ' + I18n.translateUrgency(data.urgency));
+  lines.push('', m('problem'), data.issue);
+  return lines.join('\n');
 }
 
 function showMessage(el, type, text) {
@@ -197,6 +197,12 @@ function showBookingSuccess(el, ticketId, whatsappNotified, receiptUrl, receiptN
 }
 
 function getFormData() {
+  const urgencyKey = document.getElementById('urgency').value;
+  let issue = document.getElementById('issue').value.trim();
+  if (urgencyKey) {
+    const urgencyLabel = I18n.translateUrgency(urgencyKey);
+    if (urgencyLabel) issue = '[' + urgencyLabel + ']\n' + issue;
+  }
   return {
     name: document.getElementById('name').value.trim(),
     phone: document.getElementById('phone').value.trim(),
@@ -204,7 +210,8 @@ function getFormData() {
     appliance: document.getElementById('appliance').value,
     preferredDate: document.getElementById('date').value,
     timeslot: document.getElementById('timeslot').value,
-    issue: document.getElementById('issue').value.trim(),
+    issue: issue,
+    urgency: urgencyKey,
     _website: document.getElementById('_website').value,
     lang: I18n.getLanguage(),
   };
@@ -335,6 +342,7 @@ form.addEventListener('submit', async function (event) {
     appliance: payload.appliance,
     date: payload.preferredDate,
     timeslot: payload.timeslot,
+    urgency: payload.urgency,
     issue: payload.issue,
   };
 
@@ -448,5 +456,29 @@ const observer = new IntersectionObserver(function (entries) {
 }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
 animatedEls.forEach(function (el) { observer.observe(el); });
+
+const stickyCta = document.getElementById('stickyCta');
+const heroSection = document.getElementById('home');
+const bookSection = document.getElementById('book');
+
+function updateStickyCta() {
+  if (!stickyCta || !heroSection || !bookSection) return;
+  const heroBottom = heroSection.getBoundingClientRect().bottom;
+  const bookTop = bookSection.getBoundingClientRect().top;
+  const show = heroBottom < 0 && bookTop > window.innerHeight * 0.35;
+  stickyCta.hidden = !show;
+  document.body.classList.toggle('sticky-cta-visible', show);
+}
+
+window.addEventListener('scroll', updateStickyCta, { passive: true });
+window.addEventListener('resize', updateStickyCta, { passive: true });
+updateStickyCta();
+
+if (stickyCta) {
+  stickyCta.querySelector('a').addEventListener('click', function (event) {
+    event.preventDefault();
+    scrollToSection('book');
+  });
+}
 
 initApp();

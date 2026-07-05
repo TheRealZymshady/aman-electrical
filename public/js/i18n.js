@@ -7,21 +7,18 @@
     en: {
       meta: { title: 'Aman Electrical', description: 'Aman Electrical — home appliance repair in Klang Valley. Book washing machine, fridge, and AC repairs online.' },
       nav: {
-        home: 'Home', services: 'Services', how: 'How it works', book: 'Book a repair', track: 'Track booking',
-        contact: 'Contact', bookCta: 'Book repair', langLabel: 'Language', live: 'Live',
+        home: 'Home', services: 'Services', area: 'Service area', how: 'How it works', faq: 'FAQ',
+        book: 'Book a repair', track: 'Track booking', contact: 'Contact', bookCta: 'Book repair',
+        langLabel: 'Language', live: 'Live',
       },
       signboard: { sub: 'Appliance Repair & Service' },
       hero: {
-        eyebrow: 'Technicians available today',
-        title: 'Washing machine acting up? <span>We\'re on our way.</span>',
-        lead: 'Aman Electrical, led by <strong>Amir Muazzam</strong>, repairs washing machines, refrigerators, and home appliances — same-week visits, upfront pricing, no guesswork.',
-        bookBtn: 'Book a repair →', waBtn: 'Chat on WhatsApp',
+        eyebrow: 'Klang Valley · Home visits',
+        title: 'Broken appliance at home? <span>Book a repair visit.</span>',
+        lead: 'Aman Electrical repairs washing machines, refrigerators, air conditioners, and more — at your doorstep across Klang Valley. Upfront quote before work starts, backed by a 90-day warranty.',
+        bookBtn: 'Book a repair →', waBtn: 'WhatsApp us',
         waPrefill: 'Hi Aman Electrical, I need help with an appliance.',
         leadTech: 'Lead Technician', fieldTech: 'Field Technician',
-      },
-      showcase: {
-        washTitle: 'Washing Machines', washDesc: 'Front load, top load, all major brands — fixed fast.',
-        fridgeTitle: 'Refrigerators', fridgeDesc: 'Not cooling, leaking, or noisy — diagnosed and repaired on the spot.',
       },
       trust: {
         num1: 'Same-week', label1: 'Visits',
@@ -29,9 +26,32 @@
         num3: 'Upfront', label3: 'Pricing before work',
         num4: 'On-site', label4: 'Diagnosis & repair',
       },
-      why: {
-        item1: 'Technician comes straight to your home', item2: 'No need to bring it to a shop',
-        item3: '90-day warranty on every repair', item4: 'Free advice and consultation',
+      area: {
+        tag: 'Where we serve', title: 'Home visits across Klang Valley',
+        lead: 'We come to you — no need to haul a heavy appliance to a shop. Not sure if we cover your area? WhatsApp us with your postcode.',
+        kl: 'Kuala Lumpur', pj: 'Petaling Jaya', shahAlam: 'Shah Alam', subang: 'Subang Jaya',
+        klang: 'Klang & Port Klang', puchong: 'Puchong & Seri Kembangan', ampang: 'Ampang & Cheras',
+        kajang: 'Kajang & Bangi', note: 'Outside these areas? Message us — we may still be able to help.',
+      },
+      faq: {
+        tag: 'Common questions', title: 'Before you book',
+        q1: 'How much does a repair cost?',
+        a1: 'We diagnose on-site and give you an upfront quote before any work begins. No hidden fees — you decide whether to proceed.',
+        q2: 'Which areas do you cover?',
+        a2: 'We serve homes across Klang Valley, including KL, Petaling Jaya, Shah Alam, Subang Jaya, Klang, Puchong, Ampang, Cheras, and Kajang. WhatsApp us if your area is not listed.',
+        q3: 'What warranty do you offer?',
+        a3: 'Every completed repair includes a 90-day warranty on workmanship. If the same issue returns within that period, contact us with your work order number.',
+        q4: 'How soon can you visit?',
+        a4: 'Most visits are scheduled within the same week. Submit the form or WhatsApp us — we typically call back within 30 minutes to confirm a date and time slot.',
+        q5: 'What should I prepare before the visit?',
+        a5: 'Make sure the technician can reach the appliance easily. If you know the brand and model, have that ready. A brief description of the problem helps us come prepared.',
+        q6: 'What if it cannot be fixed on the first visit?',
+        a6: 'Some repairs need parts that are not on hand. We will explain the options, quote any parts and labour, and arrange a follow-up visit once parts arrive.',
+      },
+      contact: {
+        tag: 'Get in touch', title: 'Prefer to talk first?',
+        lead: 'Message us on WhatsApp or call — same numbers our team uses for booking confirmations.',
+        waLabel: 'WhatsApp',
       },
       services: {
         tag: 'What we fix', title: "Built for the appliances that can't wait", bookTag: 'Book this repair →',
@@ -46,7 +66,7 @@
         ariaAc: 'Book repair for air conditioner', ariaGeneral: 'Book general diagnosis',
       },
       how: {
-        tag: 'Simple process', title: 'From broken to fixed in 3 steps',
+        tag: 'After you book', title: 'What happens next',
         step1Title: 'Tell us the problem', step1Desc: 'Fill in the form or message us on WhatsApp with your appliance issue and location.',
         step2Title: 'We confirm your slot', step2Desc: 'Our team calls back within 30 minutes to schedule a convenient visit time.',
         step3Title: 'Technician comes to you', step3Desc: 'We diagnose on-site, quote upfront, and fix it — backed by a 90-day warranty.',
@@ -54,7 +74,10 @@
       form: {
         title: 'Request a repair', workOrder: 'WORK ORDER',
         name: 'Full name', phone: 'Phone number', appliance: 'Appliance', date: 'Preferred date',
-        address: 'Service address', timeslot: 'Preferred time', issue: 'Describe the problem',
+        address: 'Service address', timeslot: 'Preferred time', urgency: 'How urgent is this?',
+        selectUrgency: 'Select urgency (optional)', issue: 'Describe the problem',
+        urgencyStandard: 'Standard — within the week', urgencySoon: 'Soon — within 2–3 days',
+        urgencyEmergency: 'Urgent — today or tomorrow if possible',
         namePh: 'Jane Tan', phonePh: '012-345 6789', addressPh: 'e.g. 12, Jalan SS15/4, Subang Jaya',
         issuePh: "e.g. Washing machine stops mid-cycle and won't spin.",
         selectAppliance: 'Select appliance', selectTime: 'Select time slot',
@@ -101,7 +124,7 @@
       waMessage: {
         header: '🔧 *New Repair Request — Aman Electrical*', workOrder: '*Work Order:*',
         name: '*Name:*', phone: '*Phone:*', address: '*Address:*', appliance: '*Appliance:*',
-        date: '*Preferred date:*', time: '*Preferred time:*', problem: '*Problem:*',
+        date: '*Preferred date:*', time: '*Preferred time:*', urgency: '*Urgency:*', problem: '*Problem:*',
       },
       errors: {
         'Please enter your full name.': 'Please enter your full name.',
@@ -120,21 +143,18 @@
     ms: {
       meta: { title: 'Aman Electrical', description: 'Aman Electrical — pembaikan peralatan elektrik rumah di Lembah Klang. Tempah servis mesin basuh, peti sejuk dan penghawa dingin.' },
       nav: {
-        home: 'Laman Utama', services: 'Perkhidmatan', how: 'Cara Ia Berfungsi', book: 'Tempah Servis',
-        track: 'Jejak Tempahan', contact: 'Hubungi', bookCta: 'Tempah Servis', langLabel: 'Bahasa', live: 'Langsung',
+        home: 'Laman Utama', services: 'Perkhidmatan', area: 'Kawasan servis', how: 'Cara Ia Berfungsi', faq: 'Soalan Lazim',
+        book: 'Tempah Servis', track: 'Jejak Tempahan', contact: 'Hubungi', bookCta: 'Tempah Servis',
+        langLabel: 'Bahasa', live: 'Langsung',
       },
       signboard: { sub: 'Pembaikan & Servis Peralatan' },
       hero: {
-        eyebrow: 'Juruteknik tersedia hari ini',
-        title: 'Mesin basuh rosak? <span>Kami sedang dalam perjalanan.</span>',
-        lead: 'Aman Electrical, diketuai oleh <strong>Amir Muazzam</strong>, membaiki mesin basuh, peti sejuk dan peralatan rumah — lawatan minggu sama, harga telus, tanpa tekaan.',
-        bookBtn: 'Tempah servis →', waBtn: 'Sembang di WhatsApp',
+        eyebrow: 'Lembah Klang · Lawatan ke rumah',
+        title: 'Peralatan rosak di rumah? <span>Tempah lawatan pembaikan.</span>',
+        lead: 'Aman Electrical membaiki mesin basuh, peti sejuk, penghawa dingin dan banyak lagi — di rumah anda di seluruh Lembah Klang. Sebut harga terus sebelum kerja bermula, dengan waranti 90 hari.',
+        bookBtn: 'Tempah servis →', waBtn: 'WhatsApp kami',
         waPrefill: 'Hai Aman Electrical, saya perlukan bantuan dengan peralatan saya.',
         leadTech: 'Juruteknik Utama', fieldTech: 'Juruteknik Lapangan',
-      },
-      showcase: {
-        washTitle: 'Mesin Basuh', washDesc: 'Muatan hadapan, muatan atas, semua jenama utama — dibaiki dengan cepat.',
-        fridgeTitle: 'Peti Sejuk', fridgeDesc: 'Tidak sejuk, bocor atau bising — dikesan dan dibaiki di tempat.',
       },
       trust: {
         num1: 'Minggu sama', label1: 'Lawatan',
@@ -142,9 +162,32 @@
         num3: 'Telus', label3: 'Harga sebelum kerja',
         num4: 'Di lokasi', label4: 'Diagnosis & pembaikan',
       },
-      why: {
-        item1: 'Juruteknik datang terus ke rumah anda', item2: 'Tidak perlu bawa ke kedai',
-        item3: 'Waranti 90 hari untuk setiap pembaikan', item4: 'Nasihat dan konsultasi percuma',
+      area: {
+        tag: 'Kawasan liputan', title: 'Lawatan ke rumah di seluruh Lembah Klang',
+        lead: 'Kami datang kepada anda — tidak perlu bawa peralatan berat ke kedai. Tidak pasti kawasan anda diliputi? WhatsApp kami dengan poskod anda.',
+        kl: 'Kuala Lumpur', pj: 'Petaling Jaya', shahAlam: 'Shah Alam', subang: 'Subang Jaya',
+        klang: 'Klang & Port Klang', puchong: 'Puchong & Seri Kembangan', ampang: 'Ampang & Cheras',
+        kajang: 'Kajang & Bangi', note: 'Luar kawasan ini? Hubungi kami — kami mungkin masih boleh membantu.',
+      },
+      faq: {
+        tag: 'Soalan lazim', title: 'Sebelum anda tempah',
+        q1: 'Berapa kos pembaikan?',
+        a1: 'Kami diagnosis di lokasi dan beri sebut harga terus sebelum sebarang kerja bermula. Tiada caj tersembunyi — anda tentukan sama ada mahu teruskan.',
+        q2: 'Kawasan mana yang diliputi?',
+        a2: 'Kami servis rumah di seluruh Lembah Klang, termasuk KL, Petaling Jaya, Shah Alam, Subang Jaya, Klang, Puchong, Ampang, Cheras dan Kajang. WhatsApp kami jika kawasan anda tidak tersenarai.',
+        q3: 'Apakah waranti yang ditawarkan?',
+        a3: 'Setiap pembaikan siap termasuk waranti 90 hari untuk kerja. Jika masalah sama kembali dalam tempoh itu, hubungi kami dengan nombor pesanan kerja anda.',
+        q4: 'Berapa cepat lawatan boleh dijadualkan?',
+        a4: 'Kebanyakan lawatan dijadualkan dalam minggu yang sama. Hantar borang atau WhatsApp kami — kami biasanya hubungi semula dalam 30 minit untuk sahkan tarikh dan slot masa.',
+        q5: 'Apa yang perlu saya sediakan sebelum lawatan?',
+        a5: 'Pastikan juruteknik boleh capai peralatan dengan mudah. Jika anda tahu jenama dan model, sediakan maklumat itu. Penerangan ringkas masalah membantu kami datang bersedia.',
+        q6: 'Bagaimana jika tidak boleh dibaiki pada lawatan pertama?',
+        a6: 'Sesetengah pembaikan perlukan alat ganti yang tidak ada di tangan. Kami akan terangkan pilihan, sebut harga alat ganti dan buruh, serta jadualkan lawatan susulan apabila alat ganti sampai.',
+      },
+      contact: {
+        tag: 'Hubungi kami', title: 'Lebih suka bercakap dulu?',
+        lead: 'Mesej kami di WhatsApp atau telefon — nombor sama yang pasukan kami guna untuk pengesahan tempahan.',
+        waLabel: 'WhatsApp',
       },
       services: {
         tag: 'Apa yang kami baiki', title: 'Untuk peralatan yang tidak boleh tunggu', bookTag: 'Tempah servis ini →',
@@ -159,7 +202,7 @@
         ariaAc: 'Tempah servis penghawa dingin', ariaGeneral: 'Tempah diagnosis umum',
       },
       how: {
-        tag: 'Proses mudah', title: 'Dari rosak ke siap dalam 3 langkah',
+        tag: 'Selepas tempah', title: 'Apa yang berlaku seterusnya',
         step1Title: 'Beritahu masalah anda', step1Desc: 'Isi borang atau mesej kami di WhatsApp dengan masalah peralatan dan lokasi anda.',
         step2Title: 'Kami sahkan slot anda', step2Desc: 'Pasukan kami akan hubungi dalam 30 minit untuk jadualkan masa lawatan.',
         step3Title: 'Juruteknik datang kepada anda', step3Desc: 'Kami diagnosis di lokasi, sebut harga terus dan baiki — dengan waranti 90 hari.',
@@ -167,7 +210,10 @@
       form: {
         title: 'Mohon pembaikan', workOrder: 'PESANAN KERJA',
         name: 'Nama penuh', phone: 'Nombor telefon', appliance: 'Peralatan', date: 'Tarikh pilihan',
-        address: 'Alamat servis', timeslot: 'Masa pilihan', issue: 'Terangkan masalah',
+        address: 'Alamat servis', timeslot: 'Masa pilihan', urgency: 'Seberapa segera?',
+        selectUrgency: 'Pilih kecemasan (pilihan)', issue: 'Terangkan masalah',
+        urgencyStandard: 'Biasa — dalam minggu ini', urgencySoon: 'Segera — dalam 2–3 hari',
+        urgencyEmergency: 'Mendesak — hari ini atau esok jika boleh',
         namePh: 'Siti Aminah', phonePh: '012-345 6789', addressPh: 'cth. 12, Jalan SS15/4, Subang Jaya',
         issuePh: 'cth. Mesin basuh berhenti pertengahan kitaran dan tidak berpusing.',
         selectAppliance: 'Pilih peralatan', selectTime: 'Pilih slot masa',
@@ -214,7 +260,7 @@
       waMessage: {
         header: '🔧 *Permintaan Pembaikan Baru — Aman Electrical*', workOrder: '*Pesanan Kerja:*',
         name: '*Nama:*', phone: '*Telefon:*', address: '*Alamat:*', appliance: '*Peralatan:*',
-        date: '*Tarikh pilihan:*', time: '*Masa pilihan:*', problem: '*Masalah:*',
+        date: '*Tarikh pilihan:*', time: '*Masa pilihan:*', urgency: '*Kecemasan:*', problem: '*Masalah:*',
       },
       errors: {
         'Please enter your full name.': 'Sila masukkan nama penuh anda.',
@@ -274,8 +320,9 @@
     return key ? t(key) : value;
   }
 
-  function translateBookingStatus(status) {
-    return translations[currentLang]?.bookingStatus?.[status] || status.replace(/_/g, ' ');
+  function translateUrgency(value) {
+    const map = { standard: 'form.urgencyStandard', soon: 'form.urgencySoon', emergency: 'form.urgencyEmergency' };
+    return map[value] ? t(map[value]) : '';
   }
 
   function setLanguage(lang) {
@@ -336,7 +383,7 @@
 
   window.I18n = {
     t, setLanguage, getLanguage, applyTranslations,
-    translateError, translateAppliance, translateTimeslot, translateBookingStatus,
+    translateError, translateAppliance, translateTimeslot, translateUrgency, translateBookingStatus,
   };
 
   document.documentElement.lang = currentLang === 'ms' ? 'ms' : 'en';
