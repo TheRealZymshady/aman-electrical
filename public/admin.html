@@ -3,24 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orders &amp; Audit — Aman Electrical Admin</title>
+  <title>Admin — Aman Electrical</title>
   <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body>
   <header class="admin-header">
-    <h1>Aman Electrical — Orders</h1>
-    <a href="/">← Back to website</a>
+    <div class="admin-header-brand">
+      <h1>Aman Electrical</h1>
+      <span class="admin-header-sub">Orders admin</span>
+    </div>
+    <nav class="admin-header-nav">
+      <a href="/">Website</a>
+      <button type="button" class="btn btn-ghost btn-sm hidden" id="logoutBtn">Sign out</button>
+    </nav>
   </header>
 
   <div id="loginView" class="admin-wrap">
-    <div class="login-card">
-      <h2>Admin sign in</h2>
-      <p>Enter your admin API key to manage orders, receipts, and audit exports.</p>
+    <div class="panel panel-narrow">
+      <h2>Sign in</h2>
+      <p class="panel-lead">Enter your admin API key to manage orders and exports.</p>
       <div id="loginError" class="alert alert-error hidden"></div>
       <form id="loginForm">
-        <div class="field" style="margin-bottom:16px">
+        <div class="field field-block">
           <label for="apiKey">API key</label>
-          <input type="password" id="apiKey" name="apiKey" required autocomplete="off" style="width:100%">
+          <input type="password" id="apiKey" name="apiKey" required autocomplete="off" class="input-full">
         </div>
         <button type="submit" class="btn btn-primary">Sign in</button>
       </form>
@@ -30,42 +36,45 @@
   <div id="dashboardView" class="admin-wrap hidden">
     <div id="globalAlert" class="alert alert-success hidden"></div>
 
-    <div class="stats-grid" id="statsGrid"></div>
+    <p id="summaryBar" class="summary-bar" aria-live="polite"></p>
 
-    <div class="toolbar">
-      <div class="field">
-        <label for="filterStatus">Status</label>
-        <select id="filterStatus">
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="in_progress">In progress</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="filterFrom">From</label>
-        <input type="date" id="filterFrom">
-      </div>
-      <div class="field">
-        <label for="filterTo">To</label>
-        <input type="date" id="filterTo">
-      </div>
-      <button type="button" class="btn btn-ghost" id="applyFilters">Apply filters</button>
-      <button type="button" class="btn btn-ghost" id="refreshBtn">Refresh</button>
-      <button type="button" class="btn btn-primary" id="exportBookingsCsv">Export orders (CSV)</button>
-      <button type="button" class="btn btn-ghost" id="exportBookingsJson">Export orders (JSON)</button>
-      <button type="button" class="btn btn-ghost" id="logoutBtn">Sign out</button>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab active" role="tab" data-panel="orders" aria-selected="true">Orders</button>
+      <button type="button" class="tab" role="tab" data-panel="audit" aria-selected="false">Audit log</button>
+      <button type="button" class="tab" role="tab" data-panel="calendar" aria-selected="false">Calendar</button>
     </div>
 
-    <div class="tabs">
-      <button type="button" class="tab active" data-panel="orders">Orders</button>
-      <button type="button" class="tab" data-panel="audit">Audit log</button>
-      <button type="button" class="tab" data-panel="calendar">Calendar</button>
-    </div>
-
-    <div id="ordersPanel">
+    <div id="ordersPanel" class="tab-panel" role="tabpanel">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <div class="field">
+            <label for="filterStatus">Status</label>
+            <select id="filterStatus">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="in_progress">In progress</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filterFrom">From</label>
+            <input type="date" id="filterFrom">
+          </div>
+          <div class="field">
+            <label for="filterTo">To</label>
+            <input type="date" id="filterTo">
+          </div>
+          <button type="button" class="btn btn-ghost" id="applyFilters">Apply</button>
+          <button type="button" class="btn btn-ghost" id="refreshBtn">Refresh</button>
+        </div>
+        <div class="toolbar-group">
+          <button type="button" class="btn btn-ghost" id="exportBookingsCsv">Export CSV</button>
+          <button type="button" class="btn btn-ghost" id="exportBookingsJson">Export JSON</button>
+        </div>
+      </div>
+      <div id="ordersLoading" class="loading hidden">Loading orders…</div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -85,11 +94,14 @@
       </div>
     </div>
 
-    <div id="auditPanel" class="hidden">
-      <div class="toolbar" style="margin-top:0">
-        <button type="button" class="btn btn-primary" id="exportAuditCsv">Export audit (CSV)</button>
-        <button type="button" class="btn btn-ghost" id="exportAuditJson">Export audit (JSON)</button>
+    <div id="auditPanel" class="tab-panel hidden" role="tabpanel">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <button type="button" class="btn btn-ghost" id="exportAuditCsv">Export CSV</button>
+          <button type="button" class="btn btn-ghost" id="exportAuditJson">Export JSON</button>
+        </div>
       </div>
+      <div id="auditLoading" class="loading hidden">Loading audit log…</div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -106,30 +118,31 @@
       </div>
     </div>
 
-    <div id="calendarPanel" class="hidden">
-      <div class="login-card" style="max-width:none;margin:0">
-        <h2 style="margin-bottom:8px">Technician calendar setup</h2>
-        <p style="color:var(--steel);font-size:14px;margin-bottom:20px">
-          New WhatsApp booking alerts include a Google Calendar link. For automatic sync of all jobs, subscribe once using the URLs below.
+    <div id="calendarPanel" class="tab-panel hidden" role="tabpanel">
+      <div class="panel">
+        <h2>Calendar setup</h2>
+        <p class="panel-lead">
+          Subscribe once to sync all repair jobs. Individual WhatsApp booking alerts also include a calendar link per job.
         </p>
+        <div id="calendarLoading" class="loading hidden">Loading calendar settings…</div>
         <div id="calendarStatus" class="alert alert-success hidden"></div>
-        <div id="calendarNotConfigured" class="alert alert-error hidden">
+        <div id="calendarNotConfigured" class="alert alert-warn hidden">
           Calendar feed is not configured. Set <code>CALENDAR_FEED_TOKEN</code> in your Render environment variables, then redeploy.
         </div>
         <div id="calendarUrls" class="hidden">
-          <div class="field" style="margin-bottom:14px">
-            <label>iPhone / Apple Calendar (subscribe once)</label>
-            <input type="text" id="calWebcal" readonly style="width:100%">
-            <button type="button" class="btn btn-ghost btn-sm" id="copyWebcal" style="margin-top:8px">Copy webcal URL</button>
+          <div class="field field-block">
+            <label for="calWebcal">iPhone / Apple Calendar</label>
+            <input type="text" id="calWebcal" readonly class="input-full input-mono">
+            <button type="button" class="btn btn-ghost btn-sm" id="copyWebcal">Copy webcal URL</button>
           </div>
-          <div class="field" style="margin-bottom:14px">
-            <label>Google Calendar (From URL)</label>
-            <input type="text" id="calHttps" readonly style="width:100%">
-            <button type="button" class="btn btn-ghost btn-sm" id="copyHttps" style="margin-top:8px">Copy https URL</button>
+          <div class="field field-block">
+            <label for="calHttps">Google Calendar (From URL)</label>
+            <input type="text" id="calHttps" readonly class="input-full input-mono">
+            <button type="button" class="btn btn-ghost btn-sm" id="copyHttps">Copy https URL</button>
           </div>
           <a class="btn btn-primary" id="calGoogleOpen" href="#" target="_blank" rel="noopener noreferrer">Open in Google Calendar</a>
         </div>
-        <div id="calendarSetup" style="margin-top:24px;font-size:14px;color:var(--steel)"></div>
+        <div id="calendarSetup" class="setup-notes"></div>
       </div>
     </div>
   </div>
