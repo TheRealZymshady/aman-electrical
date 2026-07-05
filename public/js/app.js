@@ -4,7 +4,10 @@ let csrfToken = '';
 let whatsappNumber = '601128731020';
 let whatsappAlertsEnabled = false;
 let ticketNum = '';
+let trackedStatus = null;
+let sseClient = null;
 
+const liveIndicator = document.getElementById('liveIndicator');
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
 
@@ -214,6 +217,84 @@ async function refreshCsrfToken() {
   csrfToken = data.csrfToken;
 }
 
+function setLiveConnected(connected) {
+  if (!liveIndicator) return;
+  liveIndicator.classList.toggle('hidden', !connected);
+}
+
+function renderStatusResult(body) {
+  statusResult.className = 'status-result status-result-ok';
+  statusResult.style.display = 'block';
+  statusResult.innerHTML = '';
+  const rows = [
+    [I18n.t('status.workOrder'), body.ticketId],
+    [I18n.t('receipt.number'), body.receiptNo || '—'],
+    [I18n.t('status.appliance'), I18n.translateAppliance(body.appliance)],
+    [I18n.t('status.date'), formatDate(body.preferredDate)],
+    [I18n.t('status.time'), I18n.translateTimeslot(body.timeslot)],
+    [I18n.t('status.status'), I18n.translateBookingStatus(body.status)],
+  ];
+  rows.forEach(function (row) {
+    const p = document.createElement('p');
+    const label = document.createElement('strong');
+    label.textContent = row[0] + ': ';
+    p.appendChild(label);
+    p.appendChild(document.createTextNode(row[1]));
+    statusResult.appendChild(p);
+  });
+
+  if (body.receiptUrl) {
+    const p = document.createElement('p');
+    p.style.marginTop = '12px';
+    const link = document.createElement('a');
+    link.className = 'wa-link';
+    link.href = body.receiptUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = I18n.t('receipt.download');
+    p.appendChild(link);
+    statusResult.appendChild(p);
+  }
+}
+
+async function refreshTrackedStatus() {
+  if (!trackedStatus) return;
+  try {
+    if (!csrfToken) await refreshCsrfToken();
+    const res = await fetch('/api/bookings/status', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify({
+        ticketId: trackedStatus.ticketId,
+        phoneLast4: trackedStatus.phoneLast4,
+      }),
+    });
+    const body = await res.json().catch(function () { return {}; });
+    if (!res.ok) return;
+    renderStatusResult(body);
+  } catch (_err) {
+    // keep last known status on transient failures
+  }
+}
+
+function connectPublicSse() {
+  if (sseClient) sseClient.close();
+  sseClient = createSseClient('/api/events', {
+    onOpen: function () { setLiveConnected(true); },
+    onClose: function () { setLiveConnected(false); },
+    events: {
+      booking_status_updated: function (data) {
+        if (!trackedStatus || data.ticketId !== trackedStatus.ticketId) return;
+        refreshTrackedStatus();
+      },
+    },
+  });
+}
+
 async function initApp() {
   I18n.applyTranslations();
 
@@ -237,6 +318,7 @@ async function initApp() {
 
   ticketNum = 'FX-' + String(Math.floor(1000 + Math.random() * 9000));
   document.getElementById('ticketNum').textContent = ticketNum.slice(3);
+  connectPublicSse();
 }
 
 const form = document.getElementById('repairForm');
@@ -341,38 +423,8 @@ if (statusForm) {
         throw new Error(I18n.translateError(body.error) || I18n.t('alerts.lookupFail'));
       }
 
-      statusResult.className = 'status-result status-result-ok';
-      statusResult.style.display = 'block';
-      statusResult.innerHTML = '';
-      const rows = [
-        [I18n.t('status.workOrder'), body.ticketId],
-        [I18n.t('receipt.number'), body.receiptNo || '—'],
-        [I18n.t('status.appliance'), I18n.translateAppliance(body.appliance)],
-        [I18n.t('status.date'), formatDate(body.preferredDate)],
-        [I18n.t('status.time'), I18n.translateTimeslot(body.timeslot)],
-        [I18n.t('status.status'), I18n.translateBookingStatus(body.status)],
-      ];
-      rows.forEach(function (row) {
-        const p = document.createElement('p');
-        const label = document.createElement('strong');
-        label.textContent = row[0] + ': ';
-        p.appendChild(label);
-        p.appendChild(document.createTextNode(row[1]));
-        statusResult.appendChild(p);
-      });
-
-      if (body.receiptUrl) {
-        const p = document.createElement('p');
-        p.style.marginTop = '12px';
-        const link = document.createElement('a');
-        link.className = 'wa-link';
-        link.href = body.receiptUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = I18n.t('receipt.download');
-        p.appendChild(link);
-        statusResult.appendChild(p);
-      }
+      trackedStatus = { ticketId: body.ticketId, phoneLast4: phoneLast4 };
+      renderStatusResult(body);
     } catch (err) {
       statusResult.className = 'status-result status-result-error';
       statusResult.style.display = 'block';

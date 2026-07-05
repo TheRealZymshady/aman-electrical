@@ -35,6 +35,11 @@ const {
   generateTicketId,
 } = require('./validate');
 const { notifyNewBooking, notifyStatusUpdate, isConfigured: whatsappReady, buildNewBookingText } = require('./whatsapp');
+const {
+  subscribe: subscribeSse,
+  emitBookingCreated,
+  emitBookingStatusUpdated,
+} = require('./realtime');
 
 const PORT = Number(process.env.PORT) || 8765;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -123,6 +128,14 @@ const receiptLimiter = rateLimit({
   message: { error: 'Too many receipt requests. Please try again later.' },
 });
 
+const sseLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many live update connections. Please try again later.' },
+});
+
 app.use(globalLimiter);
 
 function hashIp(ip) {
@@ -139,14 +152,21 @@ function requireCalendarFeed(req, res, next) {
   next();
 }
 
-function requireAdmin(req, res, next) {
+function extractAdminToken(req) {
   const auth = req.get('authorization') || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
-  if (!ADMIN_API_KEY || !token || token.length !== ADMIN_API_KEY.length) {
+  if (auth.startsWith('Bearer ')) return auth.slice(7);
+  return String(req.query.token || '');
+}
+
+function isValidAdminToken(token) {
+  if (!ADMIN_API_KEY || !token || token.length !== ADMIN_API_KEY.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(token), Buffer.from(ADMIN_API_KEY));
+}
+
+function requireAdmin(req, res, next) {
+  if (!isValidAdminToken(extractAdminToken(req))) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  const valid = crypto.timingSafeEqual(Buffer.from(token), Buffer.from(ADMIN_API_KEY));
-  if (!valid) return res.status(401).json({ error: 'Unauthorized' });
   next();
 }
 
@@ -164,6 +184,22 @@ app.get('/api/config', (_req, res) => {
 app.get('/api/csrf-token', (req, res) => {
   const token = generateCsrfToken(req, res);
   res.json({ csrfToken: token });
+});
+
+app.get('/api/events', sseLimiter, (req, res) => {
+  const isAdmin = isValidAdminToken(extractAdminToken(req));
+  const scope = isAdmin ? 'admin' : 'public';
+
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders();
+
+  res.write('event: connected\n');
+  res.write('data: ' + JSON.stringify({ scope }) + '\n\n');
+
+  subscribeSse(res, scope);
 });
 
 app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res) => {
@@ -238,6 +274,14 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
   } catch (err) {
     console.warn('Calendar sync failed:', err.message);
   }
+
+  emitBookingCreated({
+    ticketId,
+    receiptNo,
+    appliance: result.data.appliance,
+    preferredDate: result.data.preferredDate,
+    timeslot: result.data.timeslot,
+  });
 
   const phoneLast4 = result.data.phone.replace(/\D/g, '').slice(-4);
   res.status(201).json({
@@ -468,6 +512,12 @@ app.patch('/api/admin/bookings/status', requireAdmin, async (req, res) => {
     console.warn('WhatsApp status alert failed:', err.message);
   }
 
+  emitBookingStatusUpdated({
+    ticketId: result.data.ticketId,
+    status: result.data.status,
+    receiptNo: existing.receipt_no,
+  });
+
   res.json({
     ticketId: result.data.ticketId,
     receiptNo: existing.receipt_no,
@@ -508,4 +558,5 @@ app.listen(PORT, () => {
   if (!isProd) {
     console.log('Set CSRF_SECRET and ADMIN_API_KEY in .env before production deploy.');
   }
+  console.log('Real-time updates: GET /api/events (public + ?token= for admin)');
 });

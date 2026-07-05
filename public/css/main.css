@@ -176,6 +176,34 @@
     box-shadow: var(--shadow-sm);
   }
 
+  .live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ok);
+    margin-right: 8px;
+  }
+
+  .live-indicator.hidden { display: none; }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.18);
+    animation: live-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.65; transform: scale(0.92); }
+  }
+
   .lang-btn {
     border: none;
     background: transparent;

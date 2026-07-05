@@ -8,7 +8,7 @@
       meta: { title: 'Aman Electrical', description: 'Aman Electrical — home appliance repair in Klang Valley. Book washing machine, fridge, and AC repairs online.' },
       nav: {
         home: 'Home', services: 'Services', how: 'How it works', book: 'Book a repair', track: 'Track booking',
-        contact: 'Contact', bookCta: 'Book repair', langLabel: 'Language',
+        contact: 'Contact', bookCta: 'Book repair', langLabel: 'Language', live: 'Live',
       },
       signboard: { sub: 'Appliance Repair & Service' },
       hero: {
@@ -129,7 +129,7 @@
       meta: { title: 'Aman Electrical', description: 'Aman Electrical — pembaikan peralatan elektrik rumah di Lembah Klang. Tempah servis mesin basuh, peti sejuk dan penghawa dingin.' },
       nav: {
         home: 'Laman Utama', services: 'Perkhidmatan', how: 'Cara Ia Berfungsi', book: 'Tempah Servis',
-        track: 'Jejak Tempahan', contact: 'Hubungi', bookCta: 'Tempah Servis', langLabel: 'Bahasa',
+        track: 'Jejak Tempahan', contact: 'Hubungi', bookCta: 'Tempah Servis', langLabel: 'Bahasa', live: 'Langsung',
       },
       signboard: { sub: 'Pembaikan & Servis Peralatan' },
       hero: {

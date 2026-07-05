@@ -69,6 +69,10 @@
           </div>
           <button type="button" class="btn btn-ghost" id="applyFilters">Apply</button>
           <button type="button" class="btn btn-ghost" id="refreshBtn">Refresh</button>
+          <span id="liveIndicator" class="live-indicator hidden" aria-live="polite">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span>Live</span>
+          </span>
         </div>
         <div class="toolbar-group">
           <button type="button" class="btn btn-ghost" id="exportBookingsCsv">Export CSV</button>
@@ -148,6 +152,7 @@
     </div>
   </div>
 
+  <script src="/js/sse.js"></script>
   <script src="/js/admin.js"></script>
 </body>
 </html>

@@ -3,6 +3,8 @@
 const STORAGE_KEY = 'aman-admin-key';
 let apiKey = sessionStorage.getItem(STORAGE_KEY) || '';
 let activePanel = 'orders';
+let sseClient = null;
+let refreshTimer = null;
 
 const loginView = document.getElementById('loginView');
 const dashboardView = document.getElementById('dashboardView');
@@ -16,6 +18,7 @@ const ordersPanel = document.getElementById('ordersPanel');
 const auditPanel = document.getElementById('auditPanel');
 const calendarPanel = document.getElementById('calendarPanel');
 const logoutBtn = document.getElementById('logoutBtn');
+const liveIndicator = document.getElementById('liveIndicator');
 
 function showAlert(msg, type) {
   globalAlert.textContent = msg;
@@ -45,11 +48,49 @@ async function apiJson(url, options) {
 }
 
 function logout() {
+  if (sseClient) {
+    sseClient.close();
+    sseClient = null;
+  }
+  if (refreshTimer) {
+    clearTimeout(refreshTimer);
+    refreshTimer = null;
+  }
+  setLiveConnected(false);
   apiKey = '';
   sessionStorage.removeItem(STORAGE_KEY);
   loginView.classList.remove('hidden');
   dashboardView.classList.add('hidden');
   logoutBtn.classList.add('hidden');
+}
+
+function setLiveConnected(connected) {
+  if (!liveIndicator) return;
+  liveIndicator.classList.toggle('hidden', !connected);
+}
+
+function scheduleDashboardRefresh() {
+  if (refreshTimer) clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(function () {
+    refreshTimer = null;
+    refreshDashboard().catch(function (err) {
+      showAlert(err.message, 'error');
+    });
+  }, 400);
+}
+
+function connectAdminSse() {
+  if (!apiKey) return;
+  if (sseClient) sseClient.close();
+  sseClient = createSseClient('/api/events?token=' + encodeURIComponent(apiKey), {
+    onOpen: function () { setLiveConnected(true); },
+    onClose: function () { setLiveConnected(false); },
+    events: {
+      booking_created: function () { scheduleDashboardRefresh(); },
+      booking_status_updated: function () { scheduleDashboardRefresh(); },
+      stats_updated: function () { scheduleDashboardRefresh(); },
+    },
+  });
 }
 
 function formatDate(iso) {
@@ -390,6 +431,7 @@ async function initDashboard() {
   loginView.classList.add('hidden');
   dashboardView.classList.remove('hidden');
   logoutBtn.classList.remove('hidden');
+  connectAdminSse();
   try {
     await refreshDashboard();
   } catch (err) {
