@@ -114,86 +114,107 @@ function buildWhatsAppMessage(data, ticketId) {
   return lines.join('\n');
 }
 
+function hideConfirmPanel() {
+  confirmMsg.hidden = true;
+  confirmMsg.className = 'confirm-panel';
+  confirmMsg.textContent = '';
+}
+
 function showMessage(el, type, text) {
+  el.hidden = false;
+  el.className = 'confirm-panel' + (type === 'error' ? ' is-error' : '');
   el.textContent = '';
-  el.className = type === 'error' ? 'form-alert form-alert-error' : 'form-alert form-alert-success';
-  el.style.display = 'block';
   el.appendChild(document.createTextNode(text));
 }
 
-function appendReceiptLink(el, receiptUrl, receiptNo) {
-  const wrap = document.createElement('div');
-  wrap.style.marginTop = '12px';
+function buildReceiptPanel(ticketId, bodyText, actionsEl) {
+  const panel = document.createDocumentFragment();
 
+  const header = document.createElement('div');
+  header.className = 'receipt-header';
+  const check = document.createElement('span');
+  check.className = 'receipt-check';
+  check.setAttribute('aria-hidden', 'true');
+  check.textContent = '✓';
+  const title = document.createElement('h3');
+  title.className = 'receipt-title';
+  title.textContent = I18n.t('alerts.confirmed');
+  header.appendChild(check);
+  header.appendChild(title);
+  panel.appendChild(header);
+
+  const idEl = document.createElement('p');
+  idEl.className = 'receipt-id';
+  idEl.textContent = ticketId;
+  panel.appendChild(idEl);
+
+  const body = document.createElement('p');
+  body.className = 'receipt-body';
+  body.textContent = bodyText;
+  panel.appendChild(body);
+
+  if (actionsEl) {
+    const actions = document.createElement('div');
+    actions.className = 'receipt-actions';
+    actions.appendChild(actionsEl);
+    panel.appendChild(actions);
+  }
+
+  return panel;
+}
+
+function appendReceiptLink(parent, receiptUrl, receiptNo) {
   const link = document.createElement('a');
-  link.className = 'wa-link';
+  link.className = 'receipt-link';
   link.href = receiptUrl;
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
   link.textContent = I18n.t('receipt.download');
-  wrap.appendChild(link);
+  parent.appendChild(link);
 
   if (receiptNo) {
-    const ref = document.createElement('div');
-    ref.style.fontSize = '13px';
-    ref.style.marginTop = '6px';
-    ref.style.color = 'var(--steel)';
+    const ref = document.createElement('p');
+    ref.className = 'receipt-meta';
     ref.textContent = I18n.t('receipt.number') + ' ' + receiptNo;
-    wrap.appendChild(ref);
+    parent.appendChild(ref);
   }
-
-  el.appendChild(wrap);
 }
 
 function showSuccessWithWhatsApp(el, ticketId, waUrl, receiptUrl, receiptNo) {
+  el.hidden = false;
+  el.className = 'confirm-panel';
+
+  const actions = document.createElement('div');
+  const waLink = document.createElement('a');
+  waLink.className = 'wa-link';
+  waLink.href = waUrl;
+  waLink.target = '_blank';
+  waLink.rel = 'noopener noreferrer';
+  waLink.textContent = I18n.t('alerts.openWa');
+  actions.appendChild(waLink);
+  if (receiptUrl) appendReceiptLink(actions, receiptUrl, receiptNo);
+
   el.textContent = '';
-  el.className = 'form-alert form-alert-success';
-  el.style.display = 'block';
-
-  const line1 = document.createElement('div');
-  line1.appendChild(document.createTextNode(I18n.t('alerts.savedWa')));
-  const strong = document.createElement('strong');
-  strong.textContent = ticketId;
-  line1.appendChild(strong);
-  line1.appendChild(document.createTextNode(I18n.t('alerts.waTap')));
-  el.appendChild(line1);
-
-  const link = document.createElement('a');
-  link.className = 'wa-link';
-  link.href = waUrl;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
-  link.textContent = I18n.t('alerts.openWa');
-  el.appendChild(link);
-
-  if (receiptUrl) appendReceiptLink(el, receiptUrl, receiptNo);
+  el.appendChild(buildReceiptPanel(
+    ticketId,
+    I18n.t('alerts.savedWa') + ticketId + ' ' + I18n.t('alerts.waTap'),
+    actions
+  ));
 }
 
 function showBookingSuccess(el, ticketId, whatsappNotified, receiptUrl, receiptNo) {
+  el.hidden = false;
+  el.className = 'confirm-panel';
+
+  let bodyText = I18n.t('alerts.savedWa') + ticketId + ' ' +
+    (whatsappNotified ? I18n.t('alerts.savedTeam') : I18n.t('alerts.savedCall'));
+  if (!whatsappNotified) bodyText += ' ' + I18n.t('alerts.waHint');
+
+  const actions = receiptUrl ? document.createElement('div') : null;
+  if (actions && receiptUrl) appendReceiptLink(actions, receiptUrl, receiptNo);
+
   el.textContent = '';
-  el.className = 'form-alert form-alert-success';
-  el.style.display = 'block';
-
-  const line1 = document.createElement('div');
-  line1.appendChild(document.createTextNode(I18n.t('alerts.savedWa')));
-  const strong = document.createElement('strong');
-  strong.textContent = ticketId;
-  line1.appendChild(strong);
-  line1.appendChild(document.createTextNode(
-    whatsappNotified ? I18n.t('alerts.savedTeam') : I18n.t('alerts.savedCall')
-  ));
-  el.appendChild(line1);
-
-  if (!whatsappNotified) {
-    const hint = document.createElement('div');
-    hint.style.marginTop = '10px';
-    hint.style.fontSize = '13px';
-    hint.style.fontWeight = '500';
-    hint.textContent = I18n.t('alerts.waHint');
-    el.appendChild(hint);
-  }
-
-  if (receiptUrl) appendReceiptLink(el, receiptUrl, receiptNo);
+  el.appendChild(buildReceiptPanel(ticketId, bodyText, actions));
 }
 
 function getFormData() {
@@ -332,7 +353,7 @@ const submitBtn = document.getElementById('submitBtn');
 
 form.addEventListener('submit', async function (event) {
   event.preventDefault();
-  confirmMsg.style.display = 'none';
+  hideConfirmPanel();
 
   const payload = getFormData();
   const clientData = {
@@ -388,6 +409,7 @@ form.addEventListener('submit', async function (event) {
     document.getElementById('ticketNum').textContent = '—';
     I18n.applyTranslations();
     ticketNum = '';
+    confirmMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch (err) {
     showMessage(confirmMsg, 'error', err.message || I18n.t('alerts.submitFail'));
   } finally {
