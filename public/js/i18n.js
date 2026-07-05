@@ -29,7 +29,10 @@
         fridgeTitle: 'Refrigerators', fridgeDesc: 'Not cooling, leaking, or noisy — diagnosed and repaired on the spot.',
       },
       trust: {
-        response: 'Avg. response time', repairs: 'Repairs completed', warranty: 'Repair warranty', rating: 'Customer rating',
+        num1: 'Same-week', label1: 'Visits',
+        num2: '90-day', label2: 'Repair warranty',
+        num3: 'Upfront', label3: 'Pricing before work',
+        num4: 'On-site', label4: 'Diagnosis & repair',
       },
       why: {
         item1: 'Technician comes straight to your home', item2: 'No need to bring it to a shop',
@@ -52,12 +55,6 @@
         step1Title: 'Tell us the problem', step1Desc: 'Fill in the form or message us on WhatsApp with your appliance issue and location.',
         step2Title: 'We confirm your slot', step2Desc: 'Our team calls back within 30 minutes to schedule a convenient visit time.',
         step3Title: 'Technician comes to you', step3Desc: 'We diagnose on-site, quote upfront, and fix it — backed by a 90-day warranty.',
-      },
-      testimonials: {
-        tag: 'Happy customers', title: 'Trusted across the Klang Valley',
-        t1: '"My washing machine stopped spinning on a Sunday. Amir came the next morning and had it running in under an hour. Fair price, no hidden charges."',
-        t2: '"Fridge wasn\'t cooling and we were worried about food spoiling. Quick response on WhatsApp and the technician fixed the compressor issue same day."',
-        t3: '"Professional, punctual, and honest. They told me exactly what was wrong with my dishwasher before starting any work. Highly recommend Aman Electrical."',
       },
       form: {
         title: 'Request a repair', workOrder: 'WORK ORDER',
@@ -150,7 +147,10 @@
         fridgeTitle: 'Peti Sejuk', fridgeDesc: 'Tidak sejuk, bocor atau bising — dikesan dan dibaiki di tempat.',
       },
       trust: {
-        response: 'Masa respons purata', repairs: 'Pembaikan siap', warranty: 'Waranti pembaikan', rating: 'Penilaian pelanggan',
+        num1: 'Minggu sama', label1: 'Lawatan',
+        num2: '90 hari', label2: 'Waranti pembaikan',
+        num3: 'Telus', label3: 'Harga sebelum kerja',
+        num4: 'Di lokasi', label4: 'Diagnosis & pembaikan',
       },
       why: {
         item1: 'Juruteknik datang terus ke rumah anda', item2: 'Tidak perlu bawa ke kedai',
@@ -173,12 +173,6 @@
         step1Title: 'Beritahu masalah anda', step1Desc: 'Isi borang atau mesej kami di WhatsApp dengan masalah peralatan dan lokasi anda.',
         step2Title: 'Kami sahkan slot anda', step2Desc: 'Pasukan kami akan hubungi dalam 30 minit untuk jadualkan masa lawatan.',
         step3Title: 'Juruteknik datang kepada anda', step3Desc: 'Kami diagnosis di lokasi, sebut harga terus dan baiki — dengan waranti 90 hari.',
-      },
-      testimonials: {
-        tag: 'Pelanggan gembira', title: 'Dipercayai di seluruh Lembah Klang',
-        t1: '"Mesin basuh saya berhenti berpusing pada hari Ahad. Amir datang pagi esok dan siap dalam masa sejam. Harga adil, tiada caj tersembunyi."',
-        t2: '"Peti sejuk tidak sejuk dan kami bimbang makanan rosak. Respons pantas di WhatsApp dan juruteknik baiki kompresor hari sama."',
-        t3: '"Profesional, tepat masa dan jujur. Mereka beritahu masalah sebenar mesin basuh pinggan sebelum mula kerja. Sangat syorkan Aman Electrical."',
       },
       form: {
         title: 'Mohon pembaikan', workOrder: 'PESANAN KERJA',
