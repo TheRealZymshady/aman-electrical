@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: aman-electrical
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CSRF_SECRET
+        generateValue: true
+      - key: ADMIN_API_KEY
+        generateValue: true
+      - key: WHATSAPP_NUMBER
+        value: "601128731020"
+      - key: WHATSAPP_NOTIFY_NUMBERS
+        value: "601128731020,601162021508,60187664947"
+      - key: BUSINESS_NAME
+        value: Aman Electrical
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_API_TOKEN
+        sync: false
