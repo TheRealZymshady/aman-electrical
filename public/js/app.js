@@ -22,6 +22,12 @@ navLinks.querySelectorAll('a').forEach(function (link) {
   });
 });
 
+document.querySelectorAll('.lang-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    I18n.setLanguage(btn.dataset.lang);
+  });
+});
+
 const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('min', today);
@@ -47,24 +53,26 @@ document.querySelectorAll('.service-card[data-appliance]').forEach(function (car
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
-  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-MY', {
+  const locale = I18n.getLanguage() === 'ms' ? 'ms-MY' : 'en-MY';
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString(locale, {
     weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
   });
 }
 
 function buildWhatsAppMessage(data, ticketId) {
+  const m = function (key) { return I18n.t('waMessage.' + key); };
   return [
-    '🔧 *New Repair Request — Aman Electrical*',
+    m('header'),
     '',
-    '*Work Order:* ' + ticketId,
-    '*Name:* ' + data.name,
-    '*Phone:* ' + data.phone,
-    '*Address:* ' + data.address,
-    '*Appliance:* ' + data.appliance,
-    '*Preferred date:* ' + formatDate(data.date),
-    '*Preferred time:* ' + data.timeslot,
+    m('workOrder') + ' ' + ticketId,
+    m('name') + ' ' + data.name,
+    m('phone') + ' ' + data.phone,
+    m('address') + ' ' + data.address,
+    m('appliance') + ' ' + I18n.translateAppliance(data.appliance),
+    m('date') + ' ' + formatDate(data.date),
+    m('time') + ' ' + I18n.translateTimeslot(data.timeslot),
     '',
-    '*Problem:*',
+    m('problem'),
     data.issue,
   ].join('\n');
 }
@@ -76,17 +84,41 @@ function showMessage(el, type, text) {
   el.appendChild(document.createTextNode(text));
 }
 
-function showSuccessWithWhatsApp(el, ticketId, waUrl) {
+function appendReceiptLink(el, receiptUrl, receiptNo) {
+  const wrap = document.createElement('div');
+  wrap.style.marginTop = '12px';
+
+  const link = document.createElement('a');
+  link.className = 'wa-link';
+  link.href = receiptUrl;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = I18n.t('receipt.download');
+  wrap.appendChild(link);
+
+  if (receiptNo) {
+    const ref = document.createElement('div');
+    ref.style.fontSize = '13px';
+    ref.style.marginTop = '6px';
+    ref.style.color = 'var(--steel)';
+    ref.textContent = I18n.t('receipt.number') + ' ' + receiptNo;
+    wrap.appendChild(ref);
+  }
+
+  el.appendChild(wrap);
+}
+
+function showSuccessWithWhatsApp(el, ticketId, waUrl, receiptUrl, receiptNo) {
   el.textContent = '';
   el.className = 'form-alert form-alert-success';
   el.style.display = 'block';
 
   const line1 = document.createElement('div');
-  line1.appendChild(document.createTextNode('✓ Booking saved as '));
+  line1.appendChild(document.createTextNode(I18n.t('alerts.savedWa')));
   const strong = document.createElement('strong');
   strong.textContent = ticketId;
   line1.appendChild(strong);
-  line1.appendChild(document.createTextNode(' — tap Send in WhatsApp to alert our team instantly.'));
+  line1.appendChild(document.createTextNode(I18n.t('alerts.waTap')));
   el.appendChild(line1);
 
   const link = document.createElement('a');
@@ -94,26 +126,25 @@ function showSuccessWithWhatsApp(el, ticketId, waUrl) {
   link.href = waUrl;
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
-  link.textContent = 'Open WhatsApp again →';
+  link.textContent = I18n.t('alerts.openWa');
   el.appendChild(link);
+
+  if (receiptUrl) appendReceiptLink(el, receiptUrl, receiptNo);
 }
 
-function showBookingSuccess(el, ticketId, whatsappNotified) {
+function showBookingSuccess(el, ticketId, whatsappNotified, receiptUrl, receiptNo) {
   el.textContent = '';
   el.className = 'form-alert form-alert-success';
   el.style.display = 'block';
 
   const line1 = document.createElement('div');
-  line1.appendChild(document.createTextNode('✓ Booking saved as '));
+  line1.appendChild(document.createTextNode(I18n.t('alerts.savedWa')));
   const strong = document.createElement('strong');
   strong.textContent = ticketId;
   line1.appendChild(strong);
-
-  if (whatsappNotified) {
-    line1.appendChild(document.createTextNode(' — WhatsApp alert sent to our team. We will call you within 30 minutes.'));
-  } else {
-    line1.appendChild(document.createTextNode(' — we will call you within 30 minutes.'));
-  }
+  line1.appendChild(document.createTextNode(
+    whatsappNotified ? I18n.t('alerts.savedTeam') : I18n.t('alerts.savedCall')
+  ));
   el.appendChild(line1);
 
   if (!whatsappNotified) {
@@ -121,9 +152,11 @@ function showBookingSuccess(el, ticketId, whatsappNotified) {
     hint.style.marginTop = '10px';
     hint.style.fontSize = '13px';
     hint.style.fontWeight = '500';
-    hint.textContent = 'You can also message us directly on WhatsApp using the green button.';
+    hint.textContent = I18n.t('alerts.waHint');
     el.appendChild(hint);
   }
+
+  if (receiptUrl) appendReceiptLink(el, receiptUrl, receiptNo);
 }
 
 function getFormData() {
@@ -136,17 +169,20 @@ function getFormData() {
     timeslot: document.getElementById('timeslot').value,
     issue: document.getElementById('issue').value.trim(),
     _website: document.getElementById('_website').value,
+    lang: I18n.getLanguage(),
   };
 }
 
 async function refreshCsrfToken() {
   const res = await fetch('/api/csrf-token', { credentials: 'same-origin' });
-  if (!res.ok) throw new Error('Security token unavailable');
+  if (!res.ok) throw new Error(I18n.t('alerts.securityFail'));
   const data = await res.json();
   csrfToken = data.csrfToken;
 }
 
 async function initApp() {
+  I18n.applyTranslations();
+
   try {
     const [csrfRes, configRes] = await Promise.all([
       fetch('/api/csrf-token', { credentials: 'same-origin' }),
@@ -189,7 +225,7 @@ form.addEventListener('submit', async function (event) {
   };
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting…';
+  submitBtn.textContent = I18n.t('form.submitting');
 
   try {
     if (!csrfToken) await refreshCsrfToken();
@@ -208,29 +244,32 @@ form.addEventListener('submit', async function (event) {
 
     if (!res.ok) {
       if (res.status === 403) await refreshCsrfToken();
-      throw new Error(body.error || 'Unable to submit booking.');
+      throw new Error(I18n.translateError(body.error) || I18n.translateError('Unable to submit booking.'));
     }
 
     const ticketId = body.ticketId;
+    const receiptUrl = body.receiptUrl || '';
+    const receiptNo = body.receiptNo || '';
     document.getElementById('ticketNum').textContent = ticketId.slice(3);
 
     if (body.whatsappNotified) {
-      showBookingSuccess(confirmMsg, ticketId, true);
-    } else if (body.whatsappUrl) {
-      showSuccessWithWhatsApp(confirmMsg, ticketId, body.whatsappUrl);
-      window.open(body.whatsappUrl, '_blank', 'noopener,noreferrer');
+      showBookingSuccess(confirmMsg, ticketId, true, receiptUrl, receiptNo);
     } else {
-      showBookingSuccess(confirmMsg, ticketId, false);
+      const waUrl = 'https://wa.me/' + whatsappNumber + '?text=' +
+        encodeURIComponent(buildWhatsAppMessage(clientData, ticketId));
+      showSuccessWithWhatsApp(confirmMsg, ticketId, waUrl, receiptUrl, receiptNo);
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
     }
 
     form.reset();
     dateInput.setAttribute('min', today);
+    I18n.applyTranslations();
     ticketNum = ticketId;
   } catch (err) {
-    showMessage(confirmMsg, 'error', err.message || 'Submission failed. Please WhatsApp us directly.');
+    showMessage(confirmMsg, 'error', err.message || I18n.t('alerts.submitFail'));
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit booking';
+    submitBtn.textContent = I18n.t('form.submit');
   }
 });
 
@@ -243,7 +282,7 @@ if (statusForm) {
     event.preventDefault();
     statusResult.style.display = 'none';
     statusBtn.disabled = true;
-    statusBtn.textContent = 'Checking…';
+    statusBtn.textContent = I18n.t('status.checking');
 
     try {
       if (!csrfToken) await refreshCsrfToken();
@@ -265,18 +304,19 @@ if (statusForm) {
       const body = await res.json().catch(function () { return {}; });
       if (!res.ok) {
         if (res.status === 403) await refreshCsrfToken();
-        throw new Error(body.error || 'Lookup failed.');
+        throw new Error(I18n.translateError(body.error) || I18n.t('alerts.lookupFail'));
       }
 
       statusResult.className = 'status-result status-result-ok';
       statusResult.style.display = 'block';
       statusResult.innerHTML = '';
       const rows = [
-        ['Work order', body.ticketId],
-        ['Appliance', body.appliance],
-        ['Date', formatDate(body.preferredDate)],
-        ['Time', body.timeslot],
-        ['Status', body.status.replace('_', ' ')],
+        [I18n.t('status.workOrder'), body.ticketId],
+        [I18n.t('receipt.number'), body.receiptNo || '—'],
+        [I18n.t('status.appliance'), I18n.translateAppliance(body.appliance)],
+        [I18n.t('status.date'), formatDate(body.preferredDate)],
+        [I18n.t('status.time'), I18n.translateTimeslot(body.timeslot)],
+        [I18n.t('status.status'), I18n.translateBookingStatus(body.status)],
       ];
       rows.forEach(function (row) {
         const p = document.createElement('p');
@@ -286,16 +326,34 @@ if (statusForm) {
         p.appendChild(document.createTextNode(row[1]));
         statusResult.appendChild(p);
       });
+
+      if (body.receiptUrl) {
+        const p = document.createElement('p');
+        p.style.marginTop = '12px';
+        const link = document.createElement('a');
+        link.className = 'wa-link';
+        link.href = body.receiptUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = I18n.t('receipt.download');
+        p.appendChild(link);
+        statusResult.appendChild(p);
+      }
     } catch (err) {
       statusResult.className = 'status-result status-result-error';
       statusResult.style.display = 'block';
       statusResult.textContent = err.message;
     } finally {
       statusBtn.disabled = false;
-      statusBtn.textContent = 'Check status';
+      statusBtn.textContent = I18n.t('status.check');
     }
   });
 }
+
+document.addEventListener('langchange', function () {
+  submitBtn.textContent = I18n.t('form.submit');
+  statusBtn.textContent = I18n.t('status.check');
+});
 
 const animatedEls = document.querySelectorAll('.fade-in, .scale-in');
 const observer = new IntersectionObserver(function (entries) {

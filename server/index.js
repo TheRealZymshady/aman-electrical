@@ -13,10 +13,18 @@ const { doubleCsrf } = require('csrf-csrf');
 const {
   createBooking,
   getBookingForStatus,
+  getBookingForReceipt,
   getBookingFullByTicket,
   listBookings,
-  updateStatus,
+  listBookingsFiltered,
+  listAllBookingsForExport,
+  listAuditLog,
+  listAuditForExport,
+  updateBookingStatus,
+  logAudit,
+  getDashboardStats,
 } = require('./db');
+const { buildReceiptHtml, bookingsToCsv, auditToCsv } = require('./receipt');
 const {
   validateBookingPayload,
   validateStatusLookup,
@@ -103,6 +111,14 @@ const statusLimiter = rateLimit({
   message: { error: 'Too many status lookups. Please try again later.' },
 });
 
+const receiptLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many receipt requests. Please try again later.' },
+});
+
 app.use(globalLimiter);
 
 function hashIp(ip) {
@@ -144,10 +160,11 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
   }
 
   let ticketId = generateTicketId();
+  let receiptNo = '';
   let attempts = 0;
   while (attempts < 5) {
     try {
-      createBooking({
+      const inserted = createBooking({
         ticketId,
         name: result.data.name,
         phone: result.data.phone,
@@ -158,6 +175,7 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
         issue: result.data.issue,
         ipHash: hashIp(req.ip),
       });
+      receiptNo = inserted.receiptNo;
       break;
     } catch (err) {
       if (String(err.message).includes('UNIQUE')) {
@@ -187,8 +205,11 @@ app.post('/api/bookings', bookingLimiter, doubleCsrfProtection, async (req, res)
     console.warn('WhatsApp team alert failed:', err.message);
   }
 
+  const phoneLast4 = result.data.phone.replace(/\D/g, '').slice(-4);
   res.status(201).json({
     ticketId,
+    receiptNo,
+    receiptUrl: `/receipt.html?ticket=${encodeURIComponent(ticketId)}&phone=${phoneLast4}`,
     message: 'Booking received successfully.',
     whatsappNumber: WHATSAPP_NUMBER,
     whatsappNotified,
@@ -209,6 +230,8 @@ app.post('/api/bookings/status', statusLimiter, doubleCsrfProtection, (req, res)
 
   res.json({
     ticketId: booking.ticket_id,
+    receiptNo: booking.receipt_no,
+    receiptUrl: `/receipt.html?ticket=${encodeURIComponent(booking.ticket_id)}&phone=${result.data.phoneLast4}`,
     appliance: booking.appliance,
     preferredDate: booking.preferred_date,
     timeslot: booking.timeslot,
@@ -217,10 +240,128 @@ app.post('/api/bookings/status', statusLimiter, doubleCsrfProtection, (req, res)
   });
 });
 
+function exportFilters(req) {
+  return {
+    status: String(req.query.status || '').trim(),
+    fromDate: String(req.query.from || '').trim(),
+    toDate: String(req.query.to || '').trim(),
+    limit: Math.min(Number(req.query.limit) || 200, 500),
+  };
+}
+
+app.get('/api/receipt', receiptLimiter, (req, res) => {
+  const ticketRaw = String(req.query.ticket || '').trim().toUpperCase();
+  const ticketId = ticketRaw.startsWith('FX-') ? ticketRaw : (ticketRaw ? `FX-${ticketRaw}` : '');
+  const phoneLast4 = String(req.query.phone || '').replace(/\D/g, '').slice(-4);
+
+  if (!ticketId || phoneLast4.length !== 4) {
+    return res.status(422).json({ error: 'Work order and last 4 phone digits are required.' });
+  }
+
+  const booking = getBookingForReceipt.get(ticketId, phoneLast4);
+  if (!booking) {
+    return res.status(404).json({ error: 'No receipt found with those details.' });
+  }
+
+  logAudit({
+    ticketId: booking.ticket_id,
+    receiptNo: booking.receipt_no,
+    action: 'receipt_viewed',
+    details: { via: 'customer' },
+    actor: 'customer',
+  });
+
+  const accept = req.get('accept') || '';
+  if (accept.includes('application/json')) {
+    return res.json({
+      ticketId: booking.ticket_id,
+      receiptNo: booking.receipt_no,
+      html: buildReceiptHtml(booking, { verified: true }),
+    });
+  }
+
+  res.set('Content-Type', 'text/html; charset=utf-8');
+  res.send(buildReceiptHtml(booking, { verified: true }));
+});
+
+app.get('/api/admin/stats', requireAdmin, (_req, res) => {
+  res.json(getDashboardStats());
+});
+
 app.get('/api/admin/bookings', requireAdmin, (req, res) => {
-  const limit = Math.min(Number(req.query.limit) || 50, 100);
-  const rows = listBookings.all(limit);
+  const filters = exportFilters(req);
+  const rows = filters.status || filters.fromDate || filters.toDate
+    ? listBookingsFiltered.all(filters)
+    : listBookings.all(filters.limit);
   res.json({ bookings: rows });
+});
+
+app.get('/api/admin/audit', requireAdmin, (req, res) => {
+  const limit = Math.min(Number(req.query.limit) || 100, 500);
+  const rows = listAuditLog.all(limit);
+  res.json({ audit: rows });
+});
+
+app.get('/api/admin/receipt/:ticketId', requireAdmin, (req, res) => {
+  const ticketRaw = String(req.params.ticketId || '').trim().toUpperCase();
+  const ticketId = ticketRaw.startsWith('FX-') ? ticketRaw : `FX-${ticketRaw}`;
+  const booking = getBookingFullByTicket.get(ticketId);
+  if (!booking) return res.status(404).json({ error: 'Booking not found.' });
+
+  logAudit({
+    ticketId: booking.ticket_id,
+    receiptNo: booking.receipt_no,
+    action: 'receipt_viewed',
+    details: { via: 'admin' },
+    actor: 'admin',
+  });
+
+  res.set('Content-Type', 'text/html; charset=utf-8');
+  res.send(buildReceiptHtml(booking, { verified: true }));
+});
+
+app.get('/api/admin/export/bookings', requireAdmin, (req, res) => {
+  const filters = exportFilters(req);
+  const rows = listAllBookingsForExport.all(filters);
+  const format = String(req.query.format || 'csv').toLowerCase();
+  const stamp = new Date().toISOString().slice(0, 10);
+
+  logAudit({
+    action: 'export_bookings',
+    details: { format, count: rows.length, filters },
+    actor: 'admin',
+  });
+
+  if (format === 'json') {
+    res.set('Content-Disposition', `attachment; filename="aman-bookings-${stamp}.json"`);
+    return res.json({ exportedAt: new Date().toISOString(), count: rows.length, bookings: rows });
+  }
+
+  res.set('Content-Type', 'text/csv; charset=utf-8');
+  res.set('Content-Disposition', `attachment; filename="aman-bookings-${stamp}.csv"`);
+  res.send('\uFEFF' + bookingsToCsv(rows));
+});
+
+app.get('/api/admin/export/audit', requireAdmin, (req, res) => {
+  const filters = { fromDate: String(req.query.from || ''), toDate: String(req.query.to || '') };
+  const rows = listAuditForExport.all(filters);
+  const format = String(req.query.format || 'csv').toLowerCase();
+  const stamp = new Date().toISOString().slice(0, 10);
+
+  logAudit({
+    action: 'export_audit',
+    details: { format, count: rows.length, filters },
+    actor: 'admin',
+  });
+
+  if (format === 'json') {
+    res.set('Content-Disposition', `attachment; filename="aman-audit-${stamp}.json"`);
+    return res.json({ exportedAt: new Date().toISOString(), count: rows.length, audit: rows });
+  }
+
+  res.set('Content-Type', 'text/csv; charset=utf-8');
+  res.set('Content-Disposition', `attachment; filename="aman-audit-${stamp}.csv"`);
+  res.send('\uFEFF' + auditToCsv(rows));
 });
 
 app.patch('/api/admin/bookings/status', requireAdmin, async (req, res) => {
@@ -234,7 +375,7 @@ app.patch('/api/admin/bookings/status', requireAdmin, async (req, res) => {
     return res.status(404).json({ error: 'Booking not found.' });
   }
 
-  updateStatus.run(result.data.status, result.data.ticketId);
+  updateBookingStatus(result.data.ticketId, result.data.status, 'admin');
 
   let whatsappNotified = false;
   try {
@@ -259,6 +400,7 @@ app.patch('/api/admin/bookings/status', requireAdmin, async (req, res) => {
 
   res.json({
     ticketId: result.data.ticketId,
+    receiptNo: existing.receipt_no,
     status: result.data.status,
     whatsappNotified,
   });

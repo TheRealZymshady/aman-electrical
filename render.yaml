@@ -3,6 +3,7 @@ services:
     name: aman-electrical
     runtime: node
     plan: free
+    branch: master
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health

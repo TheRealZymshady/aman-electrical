@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders &amp; Audit — Aman Electrical Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Aman Electrical — Orders</h1>
+    <a href="/">← Back to website</a>
+  </header>
+
+  <div id="loginView" class="admin-wrap">
+    <div class="login-card">
+      <h2>Admin sign in</h2>
+      <p>Enter your admin API key to manage orders, receipts, and audit exports.</p>
+      <div id="loginError" class="alert alert-error hidden"></div>
+      <form id="loginForm">
+        <div class="field" style="margin-bottom:16px">
+          <label for="apiKey">API key</label>
+          <input type="password" id="apiKey" name="apiKey" required autocomplete="off" style="width:100%">
+        </div>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboardView" class="admin-wrap hidden">
+    <div id="globalAlert" class="alert alert-success hidden"></div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="toolbar">
+      <div class="field">
+        <label for="filterStatus">Status</label>
+        <select id="filterStatus">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="in_progress">In progress</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filterFrom">From</label>
+        <input type="date" id="filterFrom">
+      </div>
+      <div class="field">
+        <label for="filterTo">To</label>
+        <input type="date" id="filterTo">
+      </div>
+      <button type="button" class="btn btn-ghost" id="applyFilters">Apply filters</button>
+      <button type="button" class="btn btn-ghost" id="refreshBtn">Refresh</button>
+      <button type="button" class="btn btn-primary" id="exportBookingsCsv">Export orders (CSV)</button>
+      <button type="button" class="btn btn-ghost" id="exportBookingsJson">Export orders (JSON)</button>
+      <button type="button" class="btn btn-ghost" id="logoutBtn">Sign out</button>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="tab active" data-panel="orders">Orders</button>
+      <button type="button" class="tab" data-panel="audit">Audit log</button>
+    </div>
+
+    <div id="ordersPanel">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Receipt</th>
+              <th>Work order</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Appliance</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="auditPanel" class="hidden">
+      <div class="toolbar" style="margin-top:0">
+        <button type="button" class="btn btn-primary" id="exportAuditCsv">Export audit (CSV)</button>
+        <button type="button" class="btn btn-ghost" id="exportAuditJson">Export audit (JSON)</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Reference</th>
+              <th>Action</th>
+              <th>Actor</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="auditBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
