@@ -1,0 +1,23 @@
+app = 'aman-electrical'
+primary_region = 'sin'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[http_service]
+  internal_port = 8765
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[env]
+  NODE_ENV = 'production'
+  WHATSAPP_NUMBER = '601128731020'
+  WHATSAPP_NOTIFY_NUMBERS = '601128731020,601162021508,60187664947'
+  BUSINESS_NAME = 'Aman Electrical'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
