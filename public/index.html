@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Aman Electrical</title>
 <meta name="description" content="Aman Electrical — home appliance repair in Klang Valley. Book washing machine, fridge, and AC repairs online.">
 <meta name="robots" content="index, follow">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="theme-color" content="#8B1515">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -285,7 +288,7 @@
           </div>
           <div class="field">
             <label for="phone" data-i18n="form.phone">Phone number</label>
-            <input type="tel" id="phone" name="phone" data-i18n-placeholder="form.phonePh" placeholder="012-345 6789" required maxlength="20" pattern="[0-9+\-\s]{9,20}" autocomplete="tel">
+            <input type="tel" id="phone" name="phone" data-i18n-placeholder="form.phonePh" placeholder="012-345 6789" required maxlength="20" pattern="[0-9+\-\s]{9,20}" autocomplete="tel" inputmode="tel">
           </div>
           <div class="field">
             <label for="appliance" data-i18n="form.appliance">Appliance</label>
@@ -301,7 +304,7 @@
           </div>
           <div class="field">
             <label for="date" data-i18n="form.date">Preferred date</label>
-            <input type="date" id="date" required>
+            <input type="date" id="date" name="preferredDate" required autocomplete="off">
           </div>
           <div class="field">
             <label for="address" data-i18n="form.address">Service address</label>
@@ -346,11 +349,11 @@
         <form id="statusForm" class="status-form">
           <div class="field">
             <label for="statusTicket" data-i18n="status.ticketLabel">Work order #</label>
-            <input type="text" id="statusTicket" data-i18n-placeholder="status.ticketPh" placeholder="FX-1234" required maxlength="8" pattern="(FX-)?[0-9]{4}">
+            <input type="text" id="statusTicket" name="ticketId" data-i18n-placeholder="status.ticketPh" placeholder="FX-1234" required maxlength="8" pattern="(FX-)?[0-9]{4}" autocomplete="off" autocapitalize="characters">
           </div>
           <div class="field">
             <label for="statusPhone" data-i18n="status.phoneLabel">Phone (last 4 digits)</label>
-            <input type="text" id="statusPhone" data-i18n-placeholder="status.phonePh" placeholder="6789" required maxlength="4" pattern="[0-9]{4}" inputmode="numeric">
+            <input type="text" id="statusPhone" name="phoneLast4" data-i18n-placeholder="status.phonePh" placeholder="6789" required maxlength="4" pattern="[0-9]{4}" inputmode="numeric" autocomplete="off">
           </div>
           <button type="submit" class="btn btn-primary" id="statusBtn" data-i18n="status.check">Check status</button>
         </form>

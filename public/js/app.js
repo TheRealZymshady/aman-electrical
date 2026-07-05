@@ -8,6 +8,24 @@ let ticketNum = '';
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
 
+function getHeaderOffset() {
+  const header = document.querySelector('header');
+  return header ? header.offsetHeight + 8 : 72;
+}
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - getHeaderOffset();
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function closeNav() {
+  navLinks.classList.remove('open');
+  navToggle.classList.remove('open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+
 navToggle.addEventListener('click', function () {
   const isOpen = navLinks.classList.toggle('open');
   navToggle.classList.toggle('open', isOpen);
@@ -15,11 +33,27 @@ navToggle.addEventListener('click', function () {
 });
 
 navLinks.querySelectorAll('a').forEach(function (link) {
-  link.addEventListener('click', function () {
-    navLinks.classList.remove('open');
-    navToggle.classList.remove('open');
-    navToggle.setAttribute('aria-expanded', 'false');
+  link.addEventListener('click', function (event) {
+    const hash = link.getAttribute('href');
+    if (hash && hash.charAt(0) === '#' && hash.length > 1) {
+      event.preventDefault();
+      closeNav();
+      scrollToSection(hash.slice(1));
+      history.pushState(null, '', hash);
+    } else {
+      closeNav();
+    }
   });
+});
+
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape' && navLinks.classList.contains('open')) closeNav();
+});
+
+document.addEventListener('click', function (event) {
+  if (!navLinks.classList.contains('open')) return;
+  if (navLinks.contains(event.target) || navToggle.contains(event.target)) return;
+  closeNav();
 });
 
 document.querySelectorAll('.lang-btn').forEach(function (btn) {
@@ -36,8 +70,8 @@ const applianceSelect = document.getElementById('appliance');
 
 function bookAppliance(appliance) {
   applianceSelect.value = appliance;
-  document.getElementById('book').scrollIntoView({ behavior: 'smooth' });
-  document.getElementById('name').focus();
+  scrollToSection('book');
+  document.getElementById('name').focus({ preventScroll: true });
 }
 
 document.querySelectorAll('.service-card[data-appliance]').forEach(function (card) {
@@ -360,7 +394,7 @@ const observer = new IntersectionObserver(function (entries) {
   entries.forEach(function (entry) {
     if (entry.isIntersecting) entry.target.classList.add('visible');
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
 animatedEls.forEach(function (el) { observer.observe(el); });
 

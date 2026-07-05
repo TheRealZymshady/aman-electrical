@@ -2,40 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#8B1515">
   <title>Download Receipt — Aman Electrical</title>
   <link rel="stylesheet" href="/css/main.css">
   <style>
-    .receipt-page { max-width: 480px; margin: 48px auto; padding: 0 20px; }
+    .receipt-page {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: max(24px, env(safe-area-inset-top, 0px)) 16px calc(32px + env(safe-area-inset-bottom, 0px));
+    }
     .receipt-card {
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: 14px;
-      padding: 28px;
+      padding: 24px 20px;
       box-shadow: var(--shadow-sm);
     }
     .receipt-card h1 {
       font-family: var(--font-display);
-      font-size: 24px;
+      font-size: clamp(22px, 5vw, 24px);
       margin-bottom: 8px;
       color: var(--accent);
+      line-height: 1.25;
     }
-    .receipt-card p { color: var(--steel); font-size: 14px; margin-bottom: 20px; }
+    .receipt-card p { color: var(--steel); font-size: 15px; margin-bottom: 20px; line-height: 1.6; }
     .receipt-error {
       background: #fee2e2;
       color: #991b1b;
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 16px;
-      font-size: 14px;
+      font-size: 15px;
       display: none;
+    }
+    .site-header .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+    .site-header .logo img { height: 44px; width: auto; }
+    .site-header .nav-links { font-size: 14px; gap: 16px; }
+    .site-header .nav-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    @media (max-width: 480px) {
+      .site-header .nav-links a:not(.nav-cta) { display: none; }
     }
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a href="/" class="logo"><img src="/logo.png" alt="Aman Electrical" onerror="this.style.display='none'"></a>
+      <a href="/" class="logo"><img src="/logo.png" alt="Aman Electrical" width="120" height="44" decoding="async" onerror="this.style.display='none'"></a>
       <nav class="nav-links" id="navLinks">
         <a href="/" data-i18n="nav.home">Home</a>
         <a href="/#book" data-i18n="nav.book">Book a repair</a>
@@ -51,11 +74,11 @@
       <form id="receiptForm">
         <div class="form-group">
           <label for="receiptTicket" data-i18n="status.ticketLabel">Work order #</label>
-          <input type="text" id="receiptTicket" placeholder="FX-1234" required>
+          <input type="text" id="receiptTicket" name="ticketId" placeholder="FX-1234" required autocomplete="off" autocapitalize="characters">
         </div>
         <div class="form-group">
           <label for="receiptPhone" data-i18n="status.phoneLabel">Phone (last 4 digits)</label>
-          <input type="text" id="receiptPhone" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="6789" required>
+          <input type="text" id="receiptPhone" name="phoneLast4" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="6789" required autocomplete="off">
         </div>
         <button type="submit" class="btn btn-primary btn-block" id="receiptBtn" data-i18n="receipt.view">View receipt</button>
       </form>
